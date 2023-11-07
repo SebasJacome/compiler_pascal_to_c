@@ -1,35 +1,32 @@
 %{
-    #include <stdio.h>
+      #include <stdio.h>
 	#pragma warning(disable: 4013 4244 4267 4996)
-	
 	extern FILE * yyin;    
+      yydebug = 1;
 %}
 
+
 %union {
-    double real;
-    int integer;
+      char* cadena;
 }
 
-%token PROGRAM VAR CONST FUNCTION PROCEDURE BEGIN END ARRAY OF IF THEN ELSE 
+%token PROGRAM VAR CONST FUNCTION PROCEDURE BEG END ARRAY OF IF THEN ELSE 
 %token WHILE DO FOR TO DOWNTO READ READLN WRITE WRITELN AND OR NOT DIV MOD 
-%token LBRACE RBRACE LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS ASTERISK SLASH DOLLAR 
-%token AMPERSAND PERCENT EQUALS COLON GREATER_THAN LESS_THAN SEMICOLON COMMA PERIOD HASH
-%token LETRA DIGITO WHITESPACE INTEGER_TIPO REAL_TIPO STRING_TIPO BOOLEAN_TIPO
-%token QUOTATION EXP
+%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS ASTERISK SLASH 
+%token EQUALS COLON SEMICOLON COMMA PERIOD
+%token IDENTIFICADOR DIGITO INTEGER_TIPO REAL_TIPO STRING_TIPO BOOLEAN_TIPO
+%token EXP CADENA
 
-%token <integer> ENTERO
+
 
 %%
 
-programa : PROGRAM identificador LPAREN identificador_lista RPAREN SEMICOLON declaraciones subprograma_declaraciones
+programa : PROGRAM identificador LPAREN identificador_lista RPAREN SEMICOLON declaraciones subprograma_declaraciones instruccion_compuesta PERIOD
          ;
-identificador : LETRA 
-              | LETRA identificador_siguiente
+
+identificador : IDENTIFICADOR
               ;
-identificador_siguiente : LETRA identificador_siguiente 
-                        | DIGITO identificador_siguiente 
-                        | /* empty */
-                        ;
+
 relop : AND | OR
       ;
 
@@ -40,23 +37,24 @@ mulop : ASTERISK | SLASH | DIV | MOD
       ;
     
 identificador_lista : identificador
-                    | identificador_lista WHITESPACE COMMA identificador
+                    | identificador_lista COMMA identificador
                     ;
 
 declaraciones : declaraciones_variables
               | declaraciones_constantes
               ;
 
-declaraciones_variables : declaraciones_variables WHITESPACE VAR WHITESPACE identificador_lista COLON tipo SEMICOLON
+declaraciones_variables : declaraciones_variables VAR identificador_lista COLON tipo SEMICOLON
                         | /* empty */
 
 declaraciones_constantes : declaraciones_constantes CONST identificador EQUALS constante_entera SEMICOLON
                          | declaraciones_constantes CONST identificador EQUALS constante_real SEMICOLON
-                         | declaraciones_constantes CONST identificador EQUALS constante_cadena SEMICOLON
+                         | declaraciones_constantes CONST identificador EQUALS CADENA SEMICOLON
+                         | /* empty */
                          ;
 
 tipo : estandar_tipo
-     | ARRAY LBRACKET ENTERO PERIOD PERIOD ENTERO RBRACKET OF estandar_tipo
+     | ARRAY LBRACKET numero_entero PERIOD PERIOD numero_entero RBRACKET OF estandar_tipo
      ;
 
 estandar_tipo : INTEGER_TIPO
@@ -84,7 +82,7 @@ parametros_lista : identificador_lista COLON tipo
                  | parametros_lista SEMICOLON identificador_lista COLON tipo
                  ;
 
-instruccion_compuesta : BEGIN instrucciones_opcionales END
+instruccion_compuesta : BEG instrucciones_opcionales END
                       ;
 
 instrucciones_opcionales : instrucciones_lista
@@ -113,26 +111,12 @@ lectura_instruccion : READ LPAREN identificador RPAREN
                     | READLN LPAREN identificador RPAREN
                     ;
 
-escritura_instruccion : WRITE LPAREN constante_cadena COMMA identificador RPAREN
-                      | WRITELN LPAREN constante_cadena COMMA identificador RPAREN
-                      | WRITE LPAREN constante_cadena RPAREN
-                      | WRITELN LPAREN constante_cadena RPAREN
-                      | WRITE LPAREN constante_cadena COMMA expresion RPAREN
-                      | WRITELN LPAREN constante_cadena COMMA expresion RPAREN
-                      ;
-
-constante_cadena : QUOTATION cadena QUOTATION
-                 ;
-
-cadena : cadena caracter_alfanumerico
-       | /* empty */
-       ;
-
-caracter_alfanumerico : LETRA
-                      | DIGITO
-                      | DOLLAR | AMPERSAND | SLASH | PLUS | MINUS | ASTERISK | PERCENT
-                      | EQUALS | COLON | LBRACE | RBRACE | GREATER_THAN | LESS_THAN | SEMICOLON
-                      | LBRACKET | RBRACKET | COMMA | PERIOD | HASH
+escritura_instruccion : WRITE LPAREN CADENA COMMA identificador RPAREN
+                      | WRITELN LPAREN CADENA COMMA identificador RPAREN
+                      | WRITE LPAREN CADENA RPAREN
+                      | WRITELN LPAREN CADENA RPAREN
+                      | WRITE LPAREN CADENA COMMA expresion RPAREN
+                      | WRITELN LPAREN CADENA COMMA expresion RPAREN
                       ;
 
 if_instruccion : IF relop_expresion THEN instrucciones
@@ -213,8 +197,6 @@ constante_real : signo numero_entero PERIOD numero_entero
                ;
 
 exponente : EXP signo numero_entero
-          | EXP signo numero_entero
-          | /* empty */
           ;
 
 digito_no_cero : DIGITO;
