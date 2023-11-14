@@ -1,14 +1,19 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
-    #include "sintactico.tab.h"
+    #include <string.h>
+
+    #include "sintactico.tab.hpp"
 	#pragma warning(disable: 4996 6011 6385 4013 4244 4267)
     extern int yyerror(char* s);
+    
+    #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno;
 %}
 
 %option outfile = "scanner.c"
 %option noyywrap
 %option case-insensitive
+%option yylineno
 %pointer
 
 
@@ -51,7 +56,6 @@ DELIMITADOR [\t\r\f ]
 "not"                { yylval.cadena = yytext; return NOT; }
 "div"                { yylval.cadena = yytext; return DIV; }
 "mod"                { yylval.cadena = yytext; return MOD; }
-"e" | "E"            { yylval.cadena = yytext; return EXP}
 "("                  { yylval.cadena = yytext; return LPAREN;}
 ")"                  { yylval.cadena = yytext; return RPAREN;}
 "["                  { yylval.cadena = yytext; return LBRACKET;}
@@ -65,6 +69,20 @@ DELIMITADOR [\t\r\f ]
 ";"                  { yylval.cadena = yytext; return SEMICOLON; }
 ","                  { yylval.cadena = yytext; return COMMA; }
 "."                  { yylval.cadena = yytext; return PERIOD; }
+"<"                  { yylval.cadena = yytext; return LESSTHAN; }
+">"                  { yylval.cadena = yytext; return GREATERTHAN; }
+"<="                 { yylval.cadena = yytext; return LESSTHANEQUALS; }
+">="                 { yylval.cadena = yytext; return GREATERTHANEQUALS; }
+"<>"                 { yylval.cadena = yytext; return NOTEQUALS; }
+"\n"                 { ; }    
+
+{DIGITO}+\.{DIGITO}*["e" | "E"]{DIGITO}+ { 
+    yylval.cadena = yytext; return EXP;
+}
+
+\(\*([^*]|\*+[^)*])*\*\) {
+    printf("Comentario: %s\n", yytext);
+};
 
 \"[^\"]*\" {
     yylval.cadena = strdup(yytext);
@@ -75,7 +93,6 @@ DELIMITADOR [\t\r\f ]
     yylval.cadena = yytext;
     return IDENTIFICADOR;
 };
-
 
 {DIGITO} {
     yylval.cadena = yytext;

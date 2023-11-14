@@ -85,7 +85,12 @@
      STRING_TIPO = 301,
      BOOLEAN_TIPO = 302,
      EXP = 303,
-     CADENA = 304
+     CADENA = 304,
+     LESSTHAN = 305,
+     GREATERTHAN = 306,
+     LESSTHANEQUALS = 307,
+     GREATERTHANEQUALS = 308,
+     NOTEQUALS = 309
    };
 #endif
 
@@ -108,4 +113,18 @@ typedef union YYSTYPE
 
 extern YYSTYPE yylval;
 
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+} YYLTYPE;
+# define yyltype YYLTYPE /* obsolescent; will be withdrawn */
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
+#endif
+
+extern YYLTYPE yylloc;
 
