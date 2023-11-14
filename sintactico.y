@@ -1,5 +1,6 @@
 %{
       #include <stdio.h>
+      #include <vector>
       #include "hash_table.h"
 	#pragma warning(disable: 4013 4244 4267 4996)
 	extern FILE * yyin;   
@@ -8,6 +9,20 @@
       // yydebug = 1;
       int yyerror(char* s);
       int yylex();
+
+      unsigned int scope = 0;
+      unsigned long mem_acum = 0;
+      struct variable_line {
+            char* name;
+            unsigned int line_used;
+      };
+      vector<variable_line> last;
+      
+      HashTable ht;
+      Var_Types last_variable_type = VOID;
+      
+      void insert_table(Var_Types type, variable_line identifier);
+      
 %}
 
 %locations
@@ -23,12 +38,42 @@
 %token <cadena> IDENTIFICADOR DIGITO INTEGER_TIPO REAL_TIPO STRING_TIPO BOOLEAN_TIPO
 %token <cadena> EXP CADENA LESSTHAN GREATERTHAN LESSTHANEQUALS GREATERTHANEQUALS NOTEQUALS
 
+%type <cadena> programa identificador
+
 %%
 
-programa : PROGRAM identificador LPAREN identificador_lista RPAREN SEMICOLON declaraciones subprograma_declaraciones instruccion_compuesta PERIOD
+programa : PROGRAM
+            {
+                  scope = 1;
+                  printf("Scope changed to: %d\n", scope);
+            } 
+            identificador 
+            {
+                  insert_table(VOID, last[last.size() - 1]);
+                  last.clear();
+            }
+            LPAREN identificador_lista
+            {
+                  for (unsigned int i = 0; i < last.size(); i++) {
+                        insert_table(VOID, last[i]);
+                  }
+                  last.clear();
+            } 
+            RPAREN SEMICOLON declaraciones subprograma_declaraciones instruccion_compuesta PERIOD
+            {
+                  if (scope != 1) yyerror("Scope error");
+            }
+
          ;
 
-identificador : IDENTIFICADOR {printf("***\nIdentificador encontrado: %s Linea: %d\n***\n", $1, @1.last_line);}
+identificador : IDENTIFICADOR 
+                  { 
+                        char* var_name = strdup($1);
+                        int var_line = @1.last_line;
+                        last.push_back({var_name, var_line}); 
+                        printf("Variable encontrada: %s\n", var_name);
+                        printf("Ultimo en arreglo: %s\n", last[last.size()-1].name);
+                  }
               ;
 
 relop : AND | OR | EQUALS | LESSTHAN | GREATERTHAN | LESSTHANEQUALS | GREATERTHANEQUALS | NOTEQUALS
@@ -39,7 +84,7 @@ addop : PLUS | MINUS
 
 mulop : ASTERISK | SLASH | DIV | MOD
       ;
-    
+
 identificador_lista : identificador
                     | identificador_lista COMMA identificador
                     ;
@@ -62,9 +107,21 @@ tipo : estandar_tipo
      ;
 
 estandar_tipo : INTEGER_TIPO
+                  { 
+                        last_variable_type = INTEGER;
+                  }
               | REAL_TIPO
+                  { 
+                        last_variable_type = FLOAT;
+                  }
               | STRING_TIPO
+                  { 
+                        last_variable_type = STRING;
+                  }
               | BOOLEAN_TIPO
+                  { 
+                        last_variable_type = BOOLEAN;
+                  }
               ;
 
 subprograma_declaraciones : subprograma_declaraciones subprograma_declaracion SEMICOLON
@@ -74,8 +131,31 @@ subprograma_declaraciones : subprograma_declaraciones subprograma_declaracion SE
 subprograma_declaracion : subprograma_encabezado declaraciones subprograma_declaraciones instruccion_compuesta
                         ;
 
-subprograma_encabezado : FUNCTION identificador argumentos COLON estandar_tipo SEMICOLON
-                       | PROCEDURE identificador argumentos SEMICOLON
+subprograma_encabezado : FUNCTION 
+                        {
+                              scope *= 2;
+                              printf("Scope changed to: %d", scope);
+                        } 
+                        identificador argumentos COLON estandar_tipo
+                        {
+                              insert_table(last_variable_type, last[last.size() - 1]);
+                              last.clear()
+                        }
+                        SEMICOLON
+                        {
+                              scope /= 2;
+                              printf("Scope changed to: %d", scope);
+                        }
+                       | PROCEDURE
+                       {
+                              scope *= 2;
+                              printf("Scope changed to: %d", scope);
+                       } 
+                       identificador argumentos SEMICOLON
+                       {
+                              scope /= 2;
+                              printf("Scope changed to: %d", scope);
+                       }
                        ;
 
 argumentos : LPAREN parametros_lista RPAREN 
@@ -83,11 +163,26 @@ argumentos : LPAREN parametros_lista RPAREN
            ;
 
 parametros_lista : identificador_lista COLON tipo 
+                  {
+                        while (last.size() > 1) {
+                              insert_table(last_variable_type, last[last.size() - 1]);
+                              last.pop_back();
+                        }
+                  }
                  | parametros_lista SEMICOLON identificador_lista COLON tipo
                  ;
 
-instruccion_compuesta : BEG instrucciones_opcionales END
-                      ;
+instruccion_compuesta : BEG {
+                              scope *= 2;
+                              printf("Scope changed to: %d", scope);
+                        } 
+                        instrucciones_opcionales 
+                        END
+                        { 
+                              scope /= 2;
+                              printf("Scope changed to: %d", scope);
+                        }
+                        ;
 
 instrucciones_opcionales : instrucciones_lista
                          | /* empty */
@@ -106,9 +201,36 @@ instrucciones : variable_asignacion
               | escritura_instruccion
               ;
 
-repeticion_instruccion : WHILE relop_expresion DO instrucciones
-                       | FOR for_asignacion TO expresion DO instrucciones
-                       | FOR for_asignacion DOWNTO expresion DO instrucciones
+repeticion_instruccion : WHILE 
+                        {
+                              scope *= 2;
+                              printf("Scope changed to: %d", scope);
+                        } 
+                        relop_expresion DO instrucciones
+                        {
+                              scope /= 2;
+                              printf("Scope changed to: %d", scope);
+                        }
+                       | FOR
+                        {
+                              scope *= 2;
+                              printf("Scope changed to: %d", scope);
+                        } 
+                        for_asignacion TO expresion DO instrucciones
+                        {
+                              scope /= 2;
+                              printf("Scope changed to: %d", scope);
+                        } 
+                       | FOR
+                       {
+                              scope *= 2;
+                              printf("Scope changed to: %d", scope);
+                        } 
+                        for_asignacion DOWNTO expresion DO instrucciones
+                        {
+                              scope /= 2;
+                              printf("Scope changed to: %d", scope);
+                        }
                        ;
 
 lectura_instruccion : READ LPAREN identificador RPAREN
@@ -125,8 +247,26 @@ escritura_instruccion : WRITE LPAREN CADENA COMMA identificador RPAREN
                       | WRITELN LPAREN identificador RPAREN
                       ;
 
-if_instruccion : IF relop_expresion THEN instrucciones
-               | IF relop_expresion THEN instrucciones ELSE instrucciones
+if_instruccion : IF 
+                  {
+                        scope *= 2;
+                        printf("Scope changed to: %d", scope);
+                  } 
+                  relop_expresion THEN instrucciones
+                  {
+                        scope /= 2;
+                        printf("Scope changed to: %d", scope);
+                  }
+               | IF 
+                  {
+                        scope *= 2;
+                        printf("Scope changed to: %d", scope);
+                  }
+               relop_expresion THEN instrucciones ELSE instrucciones
+                  {
+                        scope /= 2;
+                        printf("Scope changed to: %d", scope);
+                  }
                ;
 
 variable_asignacion : variable COLON EQUALS expresion
@@ -207,9 +347,17 @@ digito_no_cero : DIGITO;
 %%
 
 int yyerror(char *s){
-    printf("Error: %s\nEn linea: %d", s, yylineno);
-	exit(1);
-	return 0;
+      printf("Error: %s\nEn linea: %d", s, yylineno);
+      exit(1);
+      return 0;
+}
+
+void insert_table(Var_Types type, variable_line identifier){
+      char* nombre = identifier.name;
+      int lugar = identifier.line_used;
+      printf("Insertando a HT: %s\n", nombre);
+      ht_insert(ht, nombre, {mem_acum, type, strlen(nombre), lugar, lugar, scope});
+      mem_acum += strlen(nombre);
 }
 
 int main( int argc, char* argv[] )
@@ -224,38 +372,11 @@ int main( int argc, char* argv[] )
 	{
 		yyin = stdin;
 	}
-      
-      HashTable ht;
+
       create_table(ht);
-
-     	yyparse();
-     	printf("Programa parseado correctamente . . .\n");
-
-      data_value data_1 = { 0, BOOLEAN, 20, 1000, "12 , 13, 14", 1 };
-      ht_insert(ht, "X1", data_1);
-      data_value data_2 = { 4,FLOAT,30,2000, "112 , 113, 114", 2 };
-      ht_insert(ht, "H1", data_2);
-      data_value data_3 = { 10,INTEGER,40,3000, "212 , 213, 214", 3 };
-      ht_insert(ht, "Z1", data_3);
-      data_value data_4 = { 15,STRING,80,5000, "312 , 313", 4};
-      ht_insert(ht, "P1", data_4);
-      data_value data_5 = { 20,BOOLEAN,100,6000, "412 , 413, 414", 1 };
-      ht_insert(ht, "A1", data_5);
-      data_value data_6 = { 24,FLOAT,130,7000, "512 , 513, 14", 2 };
-      ht_insert(ht, "B1", data_6);
-      data_value data_7 = { 210,INTEGER,140,8000, "913, 914", 3 };
-      ht_insert(ht, "C1", data_7);
-      data_value data_8 = { 215,STRING,180,9000, "712 , 713, 714", 4 };
-      ht_insert(ht, "K1", data_8);
+     	
+      yyparse();
+      
       print_table(ht);
-      ht_delete(ht, "X1");
-      print_table(ht);
-      ht_delete(ht, "B1");
-      print_table(ht);
-      print_search(ht, "C1");
-      print_search(ht, "K1");
-      free_table(ht);
-      print_table(ht);
-
-            return 0;
+      return 0;
 }

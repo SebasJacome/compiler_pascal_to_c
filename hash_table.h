@@ -6,9 +6,11 @@ using namespace std;
 
 #pragma warning(disable: 4996 6011 6387 6001)
 
-#define CAPACITY 3 // Size of the HashTable.
+#define CAPACITY 100 // Size of the HashTable.
 #define CAPACITY_COLLISION_LIST 10 // Collision list capacity
 #define MAX_LINES_REFERENCE 20 // Array's size of reference lines for identifier
+
+unsigned long memory_assign = 0;
 
 unsigned long hash_function(const char* str)
 {
@@ -20,8 +22,8 @@ unsigned long hash_function(const char* str)
     return i % CAPACITY;
 }
 
-enum Var_Types { BOOLEAN, INTEGER, FLOAT, STRING };
-enum Var_concept { VARIABLE, ARR, FUNC, PROC };
+enum Var_Types { BOOLEAN, INTEGER, FLOAT, STRING, VOID };
+enum Var_concept { VARIABLE, ARR, FUNC, PROC, CONSTANT };
 
 struct data_value
 {
@@ -32,7 +34,6 @@ struct data_value
     char source_lines_used[MAX_LINES_REFERENCE];
     unsigned int scope;
 };
-
 
 // Defines the HashTable item.
 struct Ht_item
@@ -52,6 +53,7 @@ struct HashTable
     unsigned int count = 0;
 };
 
+// Hash table functions
 void collision_list_insert(HashTable& table, unsigned int position_item, Ht_item * item)
 {
     // Inserts the item onto the LinkedList.
@@ -81,39 +83,13 @@ void create_table(HashTable & table)
     }
 }
 
-void free_item(Ht_item* item)
-{
-    // Frees an item
-    free(item->identifier_string);
-    free(item);
-}
-
-void free_table(HashTable & table)
-{
-    // Frees the table.
-    for (unsigned int i = 0; i < CAPACITY; i++)
-        if (table.items[i] != NULL)
-        {
-            free_item(table.items[i]);
-            table.items[i] = NULL;
-            table.size_of_collision_list[i] = -1;
-            for (unsigned int j = 0; j < CAPACITY_COLLISION_LIST; j++)
-                if (table.collision_list[i][j] != NULL)
-                {
-                    free(table.collision_list[i][j]);
-                    table.collision_list[i][j] = NULL;
-                }
-        }
-    table.count = 0;
-}
-
 void ht_insert(HashTable& table, const char* value, data_value data)
 {
     // Creates the item.
     Ht_item* item = create_item(value);
+    item->value.memory_assign = data.memory_assign;
     item->value.bytes_size = data.bytes_size;
     item->value.type = data.type;
-    item->value.memory_assign = data.memory_assign;
     item->value.scope = data.scope;
     item->value.source_line_definition = data.source_line_definition;
     strcpy(item->value.source_lines_used, data.source_lines_used);
@@ -138,108 +114,18 @@ bool ht_search(HashTable table, const char* key, unsigned long & index, long & c
     // Provide only non-NULL values.
     if (item != NULL)
     {
-       if (strcmp(item->identifier_string, key) == 0)
-            return true;
+        if (strcmp(item->identifier_string, key) == 0)
+                return true;
 
-       collision_list_position = -1;
-       for (Ht_item* actual : table.collision_list[index])
-       {
-           collision_list_position++;
-           if (strcmp(actual->identifier_string, key) == 0)
-               return true;
-       }
+        collision_list_position = -1;
+        for (Ht_item* actual : table.collision_list[index])
+        {
+            collision_list_position++;
+            if (strcmp(actual->identifier_string, key) == 0)
+                return true;
+        }
     }
     return false;
-}
-
-void ht_delete(HashTable & table, const char* key)
-{
-    // Deletes an item from the table.
-    int index = hash_function(key);
-    Ht_item* item = table.items[index];
-    if (item == NULL)
-        // Does not exist.
-        return;
-    else
-    {
-        if (strcmp(item->identifier_string, key) == 0 && table.size_of_collision_list[index] == -1)
-        {
-            // Collision list does not exist.
-            // Remove the item.
-            // Set table index to NULL.
-            table.items[index] = NULL;
-            free_item(item);
-            table.count--;
-            return;
-        }
-        else if (strcmp(item->identifier_string, key) == 0 && table.size_of_collision_list[index] != -1)
-        {
-            // Collision list exists.
-            if (strcmp(item->identifier_string, key) == 0)
-            {
-                // Remove this item.
-                // Set the head of the list as the new item.
-                strcpy(table.items[index]->identifier_string, table.collision_list[index][0]->identifier_string);
-                table.items[index]->value.bytes_size = table.collision_list[index][0]->value.bytes_size;
-                table.items[index]->value.type = table.collision_list[index][0]->value.type;
-                table.items[index]->value.memory_assign = table.collision_list[index][0]->value.memory_assign;
-                table.items[index]->value.scope = table.collision_list[index][0]->value.scope;
-                table.items[index]->value.source_line_definition = table.collision_list[index][0]->value.source_line_definition;
-                strcpy(table.items[index]->value.source_lines_used, table.collision_list[index][0]->value.source_lines_used);
-                for (int j = 0; j < table.size_of_collision_list[index] - 1; j++)
-                {
-                    strcpy(table.collision_list[index][j]->identifier_string, table.collision_list[index][j + 1]->identifier_string);
-                    table.collision_list[index][j]->value.bytes_size = table.collision_list[index][j + 1]->value.bytes_size;
-                    table.collision_list[index][j]->value.memory_assign = table.collision_list[index][j + 1]->value.memory_assign;
-                    table.collision_list[index][j]->value.scope = table.collision_list[index][j + 1]->value.scope;
-                    table.collision_list[index][j]->value.source_line_definition = table.collision_list[index][j + 1]->value.source_line_definition;
-                    table.collision_list[index][j]->value.type = table.collision_list[index][j + 1]->value.type;
-                    strcpy(table.collision_list[index][j]->value.source_lines_used, table.collision_list[index][j + 1]->value.source_lines_used);
-                }
-                free(table.collision_list[index][table.size_of_collision_list[index] - 1]->identifier_string);
-                table.collision_list[index][table.size_of_collision_list[index] - 1] = NULL;
-                table.size_of_collision_list[index]--;
-                table.count--;
-                return;
-            }
-        }
-        // Find on collision list and delete.
-        for (int it = 0; it < table.size_of_collision_list[index]; it++)
-            if (strcmp(table.collision_list[index][it]->identifier_string, key) == 0)
-            {
-                for (int j = it; j < table.size_of_collision_list[index] - 1; j++)
-                {
-                    strcpy(table.collision_list[index][j]->identifier_string, table.collision_list[index][j + 1]->identifier_string);
-                    table.collision_list[index][j]->value.bytes_size = table.collision_list[index][j + 1]->value.bytes_size;
-                    table.collision_list[index][j]->value.memory_assign = table.collision_list[index][j + 1]->value.memory_assign;
-                    table.collision_list[index][j]->value.scope = table.collision_list[index][j + 1]->value.scope;
-                    table.collision_list[index][j]->value.source_line_definition = table.collision_list[index][j + 1]->value.source_line_definition;
-                    table.collision_list[index][j]->value.type = table.collision_list[index][j + 1]->value.type;
-                    strcpy(table.collision_list[index][j]->value.source_lines_used, table.collision_list[index][j + 1]->value.source_lines_used);
-                }
-                free(table.collision_list[index][table.size_of_collision_list[index] - 1]->identifier_string);
-                table.collision_list[index][table.size_of_collision_list[index] - 1] = NULL;
-                table.size_of_collision_list[index]--;
-                table.count--;
-                return;
-            }
-        
-    }
-}
-
-void print_search(HashTable & table, const char* key)
-{
-    unsigned long pos = 0;
-    long collision_pos_lis = -1;
-    if (!ht_search(table, key, pos, collision_pos_lis))
-    {
-        printf("Key:%s does not exist\n", key);
-        return;
-    }
-    else if (collision_pos_lis != -1)
-            printf("Key:%s, Index:%d, Collision list position:%d\n", key, pos, collision_pos_lis);
-         else
-            printf("Key:%s, Index:%d\n", key, pos);
 }
 
 void print_table(HashTable table)
@@ -249,9 +135,9 @@ void print_table(HashTable table)
     for (int i = 0; i < CAPACITY; i++)
         if (table.items[i])
         {
-            printf("Index:%d, Key:%s\n", i, table.items[i]->identifier_string);
+            printf("Index:%d, Key:%s, Line: %d\n", i, table.items[i]->identifier_string, table.items[i]->value.source_line_definition);
             for (int it = 0; it < table.size_of_collision_list[i]; it++)
-                printf("Index:%d, Collision list position:%d, Key:%s\n", i, it, table.collision_list[i][it]->identifier_string);
+                printf("Index:%d, Collision list position:%d, Key:%s, Line: %d\n", i, it, table.collision_list[i][it]->identifier_string, table.collision_list[i][it]->value.source_line_definition);
         }
     printf("-------------------\n\n");
 }
