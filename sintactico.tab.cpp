@@ -70,6 +70,7 @@
 
       #include <stdio.h>
       #include <vector>
+      #include <string>
       #include "hash_table.h"
 	#pragma warning(disable: 4013 4244 4267 4996)
 	extern FILE * yyin;   
@@ -79,7 +80,8 @@
       int yyerror(char* s);
       int yylex();
 
-      unsigned int scope = 0;
+      int scope_aux = -1;
+      string scope; 
       unsigned long mem_acum = 0;
       struct variable_line {
             char* name;
@@ -91,7 +93,8 @@
       Var_Types last_variable_type = VOID;
       
       void insert_table(Var_Types type, variable_line identifier);
-      
+      void inc_scope();
+      void dec_scope();
 
 
 
@@ -547,19 +550,19 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    46,    46,    51,    56,    45,    69,    79,    79,    79,
-      79,    79,    79,    79,    79,    82,    82,    85,    85,    85,
-      85,    88,    89,    92,    93,    96,    97,    99,   100,   101,
-     102,   105,   106,   109,   113,   117,   121,   127,   128,   131,
-     135,   140,   134,   150,   149,   161,   162,   165,   172,   175,
-     175,   187,   188,   191,   192,   195,   196,   197,   198,   199,
-     200,   201,   205,   204,   215,   214,   225,   224,   236,   237,
-     240,   241,   242,   243,   244,   245,   246,   247,   251,   250,
-     261,   260,   272,   275,   276,   279,   280,   283,   283,   285,
-     286,   289,   290,   293,   294,   297,   298,   301,   303,   304,
-     307,   308,   311,   312,   315,   318,   319,   320,   321,   322,
-     323,   324,   327,   328,   329,   332,   334,   337,   338,   341,
-     342,   345
+       0,    49,    49,    92,    97,    48,   110,   120,   120,   120,
+     120,   120,   120,   120,   120,   123,   123,   126,   126,   126,
+     126,   129,   130,   133,   134,   137,   138,   140,   141,   142,
+     143,   146,   147,   150,   154,   158,   162,   168,   169,   172,
+     176,   181,   175,   191,   190,   202,   203,   206,   213,   216,
+     216,   228,   229,   232,   233,   236,   237,   238,   239,   240,
+     241,   242,   246,   245,   256,   255,   266,   265,   277,   278,
+     281,   282,   283,   284,   285,   286,   287,   288,   292,   291,
+     302,   301,   313,   316,   317,   320,   321,   324,   324,   326,
+     327,   330,   331,   334,   335,   338,   339,   342,   344,   345,
+     348,   349,   352,   353,   356,   359,   360,   361,   362,   363,
+     364,   365,   368,   369,   370,   373,   375,   378,   379,   382,
+     383,   386
 };
 #endif
 
@@ -1668,8 +1671,46 @@ yyreduce:
         case 2:
 
     {
-                  scope = 1;
-                  printf("Scope changed to: %d\n", scope);
+                  /*
+                        int s = -1;
+                        stack<int> scope;
+                        program main(){ scope.push(s + 1) // [0]
+                              funcion suma(){ scope.push(s + 1) [0,1]
+                                    s = 0;
+                                    if(){ scope.push(s + 1) [0.1.1]
+                                          s = 0;
+                                    } s = scope[scope.size()-1] // 1; scope.pop() [0.1] s=1
+                                    a = 1;
+                                    for(){ scope.push(s+1) [0.1.2]
+                                          s = 0;
+                                    } s = scope[scope.size()-1]; scope.pop() [0.1] s=2
+                                    
+                                    while(){ scope.push(s+1) [0.1.3]
+                                          s = 0;
+                                    } s = scope[scope.size()-1]; scope.pop() scope =[0.1] s=3
+
+                              } s = scope[scope.size()-1]; scope.pop() [0] s=1
+                              
+                              funcion resta(){ scope.push(s+1) [0.2]
+                                    s = 0;
+                                    if(){ scope.push(s + 1); [0.2.1]
+                                          s = 0;
+                                          if(){ scope.push(s + 1); [0.2.1.1]
+                                                s = 0;
+                                          } s = scope[scope.size()-1]; scope.pop() [0.2.1] s=1
+
+                                    } s = scope[scope.size()-1]; scope.pop() [0.2] s=1
+                                    
+                              } s = scope[scope.size()-1]; scope.pop() [0] s=2
+
+                              funcion mult(){ scope.push(s+1) [0.3] 
+                                    s=0
+                              }
+                        }
+
+                  */
+                  scope = "0";
+                  printf("Scope changed to: %s\n", scope);
             ;}
     break;
 
@@ -1694,7 +1735,7 @@ yyreduce:
   case 5:
 
     {
-                  if (scope != 1) yyerror("Scope error");
+                  if (scope != "0") yyerror("Scope error");
             ;}
     break;
 
@@ -1740,8 +1781,8 @@ yyreduce:
   case 40:
 
     {
-                              scope *= 2;
-                              printf("Scope changed to: %d", scope);
+                              inc_scope();
+                              printf("Scope changed to: %s", scope);
                         ;}
     break;
 
@@ -1756,24 +1797,24 @@ yyreduce:
   case 42:
 
     {
-                              scope /= 2;
-                              printf("Scope changed to: %d", scope);
+                              dec_scope();
+                              printf("Scope changed to: %s", scope);
                         ;}
     break;
 
   case 43:
 
     {
-                              scope *= 2;
-                              printf("Scope changed to: %d", scope);
+                              inc_scope();
+                              printf("Scope changed to: %s", scope);
                        ;}
     break;
 
   case 44:
 
     {
-                              scope /= 2;
-                              printf("Scope changed to: %d", scope);
+                              dec_scope();
+                              printf("Scope changed to: %s", scope);
                        ;}
     break;
 
@@ -1790,96 +1831,96 @@ yyreduce:
   case 49:
 
     {
-                              scope *= 2;
-                              printf("Scope changed to: %d", scope);
+                              inc_scope();
+                              printf("Scope changed to: %s", scope);
                         ;}
     break;
 
   case 50:
 
     { 
-                              scope /= 2;
-                              printf("Scope changed to: %d", scope);
+                              dec_scope();
+                              printf("Scope changed to: %s", scope);
                         ;}
     break;
 
   case 62:
 
     {
-                              scope *= 2;
-                              printf("Scope changed to: %d", scope);
+                              inc_scope();
+                              printf("Scope changed to: %s", scope);
                         ;}
     break;
 
   case 63:
 
     {
-                              scope /= 2;
-                              printf("Scope changed to: %d", scope);
+                              dec_scope();
+                              printf("Scope changed to: %s", scope);
                         ;}
     break;
 
   case 64:
 
     {
-                              scope *= 2;
-                              printf("Scope changed to: %d", scope);
+                              inc_scope();
+                              printf("Scope changed to: %s", scope);
                         ;}
     break;
 
   case 65:
 
     {
-                              scope /= 2;
-                              printf("Scope changed to: %d", scope);
+                              dec_scope();
+                              printf("Scope changed to: %s", scope);
                         ;}
     break;
 
   case 66:
 
     {
-                              scope *= 2;
-                              printf("Scope changed to: %d", scope);
+                              inc_scope();
+                              printf("Scope changed to: %s", scope);
                         ;}
     break;
 
   case 67:
 
     {
-                              scope /= 2;
-                              printf("Scope changed to: %d", scope);
+                              dec_scope();
+                              printf("Scope changed to: %s", scope);
                         ;}
     break;
 
   case 78:
 
     {
-                        scope *= 2;
-                        printf("Scope changed to: %d", scope);
+                        inc_scope();
+                        printf("Scope changed to: %s", scope);
                   ;}
     break;
 
   case 79:
 
     {
-                        scope /= 2;
-                        printf("Scope changed to: %d", scope);
+                        dec_scope();
+                        printf("Scope changed to: %s", scope);
                   ;}
     break;
 
   case 80:
 
     {
-                        scope *= 2;
-                        printf("Scope changed to: %d", scope);
+                        inc_scope();
+                        printf("Scope changed to: %s", scope);
                   ;}
     break;
 
   case 81:
 
     {
-                        scope /= 2;
-                        printf("Scope changed to: %d", scope);
+                        dec_scope();
+                        printf("Scope changed to: %s", scope);
                   ;}
     break;
 
@@ -2110,12 +2151,44 @@ int yyerror(char *s){
       return 0;
 }
 
-void insert_table(Var_Types type, variable_line identifier){
+void inc_scope() {
+      scope = scope + "." + to_string(scope_aux);
+      scope_aux = 0;
+}
+
+void dec_scope() {
+      scope_aux = (int)scope[scope.size() - 1];
+      scope.substr(0, scope.size() - 2);
+}
+
+void insert_table(Var_Types type, variable_line identifier) {
       char* nombre = identifier.name;
-      int lugar = identifier.line_used;
+      unsigned long lugar = identifier.line_used;
       printf("Insertando a HT: %s\n", nombre);
-      ht_insert(ht, nombre, {mem_acum, type, strlen(nombre), lugar, lugar, scope});
-      mem_acum += strlen(nombre);
+      unsigned long bytesize = 0;
+      switch (type) {
+            case BOOLEAN:
+                  bytesize = 1;
+                  break;
+            case INTEGER:
+                  bytesize = 4;
+                  break;
+            case FLOAT:
+                  bytesize = 6;
+                  break;
+            case VOID:
+                  bytesize = 0;
+                  break;
+            case STRING:
+                  bytesize = 255;
+                  break;
+            default:
+                  bytesize = 0;
+                  break;
+      }
+      ht_insert(ht, nombre, {mem_acum, type, bytesize, lugar, "a", scope});
+      mem_acum += bytesize;
+      printf("Insertado correctamente\n");
 }
 
 int main( int argc, char* argv[] )
