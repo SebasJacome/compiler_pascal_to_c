@@ -3,7 +3,7 @@
     #include <stdlib.h>
     #include <string.h>
 
-    #include "sintactico.tab.hpp"
+    #include "sintactico.tab.h"
 	#pragma warning(disable: 4996 6011 6385 4013 4244 4267)
     extern int yyerror(char* s);
     

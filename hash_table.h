@@ -32,8 +32,8 @@ struct data_value
     Var_Types type;
     unsigned long bytes_size;
     unsigned long source_line_definition;
-    string source_lines_used;
-    string scope;
+    char* source_lines_used;
+    char* scope;
 };
 
 // Defines the HashTable item.
@@ -92,8 +92,9 @@ void ht_insert(HashTable& table, const char* value, data_value data)
     item->value.bytes_size = data.bytes_size;
     item->value.type = data.type;
     item->value.scope = data.scope;
+    printf("************************Scope: %s\n", item->value.scope);
     item->value.source_line_definition = data.source_line_definition;
-    item->value.source_lines_used[0] = data.source_line_definition; // cambiar para cuando se usa la variable
+    item->value.source_lines_used = data.source_lines_used;
     // Computes the index.
     unsigned int index = hash_function(value);
     if (table.items[index] == NULL)
@@ -136,19 +137,26 @@ void print_table(HashTable table)
     for (int i = 0; i < CAPACITY; i++)
         if (table.items[i])
         {
-            printf("Index:%d, Key:%s, Mem_assign: %d, Type: %d, Byte_Size: %d, Line_def: %d, Scope: %s, Lines_used: ", 
+            printf("Index:%d, Key:%s, Mem_assign: %d, Type: %d, Byte_Size: %d, Line_def: %d, Scope: %s, Lines_used: %s\n", 
             i, 
             table.items[i]->identifier_string, 
             table.items[i]->value.memory_assign,
             table.items[i]->value.type,
             table.items[i]->value.bytes_size,
             table.items[i]->value.source_line_definition,
-            table.items[i]->value.scope);
-            for (unsigned int i = 0; i < MAX_LINES_REFERENCE; i++)
-                printf("%d ", table.items[i]->value.source_lines_used[i]);
-            printf("\n");
+            table.items[i]->value.scope,
+            table.items[i]->value.source_lines_used);
             for (int it = 0; it < table.size_of_collision_list[i]; it++)
-                printf("Index:%d, Collision list position:%d, Key:%s, Line: %d\n", i, it, table.collision_list[i][it]->identifier_string, table.collision_list[i][it]->value.source_line_definition);
+                printf("Index:%d, Collision list position:%d, Key:%s, Mem_assign: %d, Type: %d, Byte_Size: %d, Line_def: %d, Scope: %s, Lines_used: %s\n", 
+                i, 
+                it, 
+                table.collision_list[i][it]->identifier_string, 
+                table.collision_list[i][it]->value.memory_assign,
+                table.collision_list[i][it]->value.type,
+                table.collision_list[i][it]->value.bytes_size,
+                table.collision_list[i][it]->value.source_line_definition,
+                table.collision_list[i][it]->value.scope,
+                table.collision_list[i][it]->value.source_lines_used);
         }
     printf("-------------------\n\n");
 }

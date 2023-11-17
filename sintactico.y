@@ -2,6 +2,8 @@
       #include <stdio.h>
       #include <vector>
       #include <string>
+      #include <string.h>
+      #include <cstring>
       #include "hash_table.h"
 	#pragma warning(disable: 4013 4244 4267 4996)
 	extern FILE * yyin;   
@@ -11,8 +13,8 @@
       int yyerror(char* s);
       int yylex();
 
-      int scope_aux = -1;
-      string scope; 
+      int scope_aux = 0;
+      string scope = ""; 
       unsigned long mem_acum = 0;
       struct variable_line {
             char* name;
@@ -47,46 +49,7 @@
 
 programa : PROGRAM
             {
-                  /*
-                        int s = -1;
-                        stack<int> scope;
-                        program main(){ scope.push(s + 1) // [0]
-                              funcion suma(){ scope.push(s + 1) [0,1]
-                                    s = 0;
-                                    if(){ scope.push(s + 1) [0.1.1]
-                                          s = 0;
-                                    } s = scope[scope.size()-1] // 1; scope.pop() [0.1] s=1
-                                    a = 1;
-                                    for(){ scope.push(s+1) [0.1.2]
-                                          s = 0;
-                                    } s = scope[scope.size()-1]; scope.pop() [0.1] s=2
-                                    
-                                    while(){ scope.push(s+1) [0.1.3]
-                                          s = 0;
-                                    } s = scope[scope.size()-1]; scope.pop() scope =[0.1] s=3
-
-                              } s = scope[scope.size()-1]; scope.pop() [0] s=1
-                              
-                              funcion resta(){ scope.push(s+1) [0.2]
-                                    s = 0;
-                                    if(){ scope.push(s + 1); [0.2.1]
-                                          s = 0;
-                                          if(){ scope.push(s + 1); [0.2.1.1]
-                                                s = 0;
-                                          } s = scope[scope.size()-1]; scope.pop() [0.2.1] s=1
-
-                                    } s = scope[scope.size()-1]; scope.pop() [0.2] s=1
-                                    
-                              } s = scope[scope.size()-1]; scope.pop() [0] s=2
-
-                              funcion mult(){ scope.push(s+1) [0.3] 
-                                    s=0
-                              }
-                        }
-
-                  */
                   scope = "0";
-                  printf("Scope changed to: %s\n", scope);
             } 
             identificador 
             {
@@ -175,28 +138,18 @@ subprograma_declaracion : subprograma_encabezado declaraciones subprograma_decla
 subprograma_encabezado : FUNCTION 
                         {
                               inc_scope();
-                              printf("Scope changed to: %s", scope);
                         } 
                         identificador argumentos COLON estandar_tipo
                         {
                               insert_table(last_variable_type, last[last.size() - 1]);
-                              last.clear()
+                              last.clear();
                         }
                         SEMICOLON
-                        {
-                              dec_scope();
-                              printf("Scope changed to: %s", scope);
-                        }
                        | PROCEDURE
                        {
                               inc_scope();
-                              printf("Scope changed to: %s", scope);
                        } 
                        identificador argumentos SEMICOLON
-                       {
-                              dec_scope();
-                              printf("Scope changed to: %s", scope);
-                       }
                        ;
 
 argumentos : LPAREN parametros_lista RPAREN 
@@ -213,15 +166,10 @@ parametros_lista : identificador_lista COLON tipo
                  | parametros_lista SEMICOLON identificador_lista COLON tipo
                  ;
 
-instruccion_compuesta : BEG {
-                              inc_scope();
-                              printf("Scope changed to: %s", scope);
-                        } 
-                        instrucciones_opcionales 
+instruccion_compuesta : BEG instrucciones_opcionales 
                         END
                         { 
                               dec_scope();
-                              printf("Scope changed to: %s", scope);
                         }
                         ;
 
@@ -245,32 +193,30 @@ instrucciones : variable_asignacion
 repeticion_instruccion : WHILE 
                         {
                               inc_scope();
-                              printf("Scope changed to: %s", scope);
+                              
                         } 
                         relop_expresion DO instrucciones
                         {
                               dec_scope();
-                              printf("Scope changed to: %s", scope);
+                              
                         }
                        | FOR
                         {
                               inc_scope();
-                              printf("Scope changed to: %s", scope);
+                              
                         } 
                         for_asignacion TO expresion DO instrucciones
                         {
                               dec_scope();
-                              printf("Scope changed to: %s", scope);
+                              
                         } 
                        | FOR
                        {
                               inc_scope();
-                              printf("Scope changed to: %s", scope);
                         } 
                         for_asignacion DOWNTO expresion DO instrucciones
                         {
                               dec_scope();
-                              printf("Scope changed to: %s", scope);
                         }
                        ;
 
@@ -291,22 +237,18 @@ escritura_instruccion : WRITE LPAREN CADENA COMMA identificador RPAREN
 if_instruccion : IF 
                   {
                         inc_scope();
-                        printf("Scope changed to: %s", scope);
                   } 
                   relop_expresion THEN instrucciones
                   {
                         dec_scope();
-                        printf("Scope changed to: %s", scope);
                   }
                | IF 
                   {
                         inc_scope();
-                        printf("Scope changed to: %s", scope);
                   }
                relop_expresion THEN instrucciones ELSE instrucciones
                   {
                         dec_scope();
-                        printf("Scope changed to: %s", scope);
                   }
                ;
 
@@ -394,13 +336,19 @@ int yyerror(char *s){
 }
 
 void inc_scope() {
-      scope = scope + "." + to_string(scope_aux);
+      scope = scope + "." + to_string(scope_aux + 1);
       scope_aux = 0;
+      printf("----------Aumenta Scope: %s\n", scope.c_str());
 }
 
 void dec_scope() {
-      scope_aux = (int)scope[scope.size() - 1];
-      scope.substr(0, scope.size() - 2);
+      string scope_last = scope;
+      scope_last = scope_last.substr(scope_last.find_last_of('.') + 1, scope_last.length() - 1);
+      printf("Scope last: %s", scope_last.c_str());
+      if (scope_last.length() > 0)
+            scope_aux = std::stoi(scope_last);
+      scope = scope.substr(0, scope.find_last_of("."));
+      printf("----------Disminye Scope: %s aux = %d\n", scope.c_str(), scope_aux);
 }
 
 void insert_table(Var_Types type, variable_line identifier) {
@@ -428,7 +376,9 @@ void insert_table(Var_Types type, variable_line identifier) {
                   bytesize = 0;
                   break;
       }
-      ht_insert(ht, nombre, {mem_acum, type, bytesize, lugar, "abc", scope});
+      char* scope_char = new char[scope.length() + 1];
+      strcpy(scope_char, scope.c_str());
+      ht_insert(ht, nombre, {mem_acum, type, bytesize, lugar, scope_char, scope_char});
       mem_acum += bytesize;
       printf("Insertado correctamente\n");
 }
@@ -447,9 +397,10 @@ int main( int argc, char* argv[] )
 	}
 
       create_table(ht);
-     	
+
       yyparse();
-      
+
       print_table(ht);
+
       return 0;
 }
