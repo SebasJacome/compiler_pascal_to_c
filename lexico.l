@@ -19,6 +19,7 @@
 
 LETRA [a-zA-Z]
 DIGITO [0-9]
+DIGITO_NO_CERO [1-9]
 
 DELIMITADOR [\t\r\f ]
 
@@ -94,9 +95,9 @@ DELIMITADOR [\t\r\f ]
     return IDENTIFICADOR;
 };
 
-{DIGITO} {
+{DIGITO_NO_CERO}{DIGITO}* {
     yylval.cadena = yytext;
-    return DIGITO;
+    return NUM_ENTERO;
 }
 
 .               {printf("Caracter invalido");}

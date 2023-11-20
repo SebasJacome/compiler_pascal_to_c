@@ -13,12 +13,13 @@
       int yyerror(char* s);
       int yylex();
 
-      int scope_aux = 0;
-      string scope = ""; 
+      unsigned short scope = 0; 
+      unsigned short current_scope = 0;
       unsigned long mem_acum = 0;
+
       struct variable_line {
             char* name;
-            unsigned int line_used;
+            int line_used;
       };
       vector<variable_line> last;
       
@@ -26,8 +27,10 @@
       Var_Types last_variable_type = VOID;
       
       void insert_table(Var_Types type, variable_line identifier);
-      void inc_scope();
-      void dec_scope();
+      void insert_table_defsize(Var_Types type, variable_line identifier, unsigned long size);
+      void insert_table_var_def(Var_Types type, variable_line identifier);
+      void insert_table_var_used(Var_Types type, variable_line identifier);
+      void insert_table_func_def(Var_Types type, variable_line identifier);
 %}
 
 %locations
@@ -40,43 +43,38 @@
 %token <cadena> WHILE DO FOR TO DOWNTO READ READLN WRITE WRITELN AND OR NOT DIV MOD 
 %token <cadena> LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS ASTERISK SLASH 
 %token <cadena> EQUALS COLON SEMICOLON COMMA PERIOD
-%token <cadena> IDENTIFICADOR DIGITO INTEGER_TIPO REAL_TIPO STRING_TIPO BOOLEAN_TIPO
+%token <cadena> IDENTIFICADOR NUM_ENTERO INTEGER_TIPO REAL_TIPO STRING_TIPO BOOLEAN_TIPO
 %token <cadena> EXP CADENA LESSTHAN GREATERTHAN LESSTHANEQUALS GREATERTHANEQUALS NOTEQUALS
-
-%type <cadena> programa identificador
 
 %%
 
 programa : PROGRAM
             {
-                  scope = "0";
+                  scope = 0;
             } 
             identificador 
             {
-                  insert_table(VOID, last[last.size() - 1]);
+                  insert_table_var_def(VOID, last[last.size() - 1]);
                   last.clear();
             }
             LPAREN identificador_lista
             {
                   for (unsigned int i = 0; i < last.size(); i++) {
-                        insert_table(VOID, last[i]);
+                        insert_table_var_def(VOID, last[i]);
                   }
                   last.clear();
             } 
             RPAREN SEMICOLON declaraciones subprograma_declaraciones instruccion_compuesta PERIOD
             {
-                  if (scope != "0") yyerror("Scope error");
+                  if (current_scope != 0) yyerror("Scope error, no se cerro el scope actual");
             }
-
-         ;
+            ;
 
 identificador : IDENTIFICADOR 
                   { 
                         char* var_name = strdup($1);
                         int var_line = @1.last_line;
                         last.push_back({var_name, var_line}); 
-                        printf("Variable encontrada: %s\n", var_name);
-                        printf("Ultimo en arreglo: %s\n", last[last.size()-1].name);
                   }
               ;
 
@@ -98,16 +96,46 @@ declaraciones : declaraciones_variables
               ;
 
 declaraciones_variables : declaraciones_variables VAR identificador_lista COLON tipo SEMICOLON
+                        {
+                              for(unsigned int i = 0; i < last.size(); i++) {
+                                    insert_table_var_def(last_variable_type, last[i]);
+                              }
+                              last.clear();
+                        }
                         | /* empty */
 
 declaraciones_constantes : declaraciones_constantes CONST identificador EQUALS constante_entera SEMICOLON
+                         {
+                              for(unsigned int i = 0; i < last.size(); i++) {
+                                    insert_table_var_def(CONST_ENTERO, last[i]);
+                              }
+                              last.clear();
+                         }
                          | declaraciones_constantes CONST identificador EQUALS constante_real SEMICOLON
+                         {
+                              for(unsigned int i = 0; i < last.size(); i++) {
+                                    insert_table_var_def(CONST_REAL, last[i]);
+                              }
+                              last.clear();
+                        }
                          | declaraciones_constantes CONST identificador EQUALS CADENA SEMICOLON
+                         {
+                              for(unsigned int i = 0; i < last.size(); i++) {
+                                    insert_table_var_def(CONST_CADENA, last[i]);
+                              }
+                              last.clear();
+                         }
                          | /* empty */
                          ;
 
 tipo : estandar_tipo
-     | ARRAY LBRACKET numero_entero PERIOD PERIOD numero_entero RBRACKET OF estandar_tipo
+     | ARRAY LBRACKET NUM_ENTERO PERIOD PERIOD NUM_ENTERO RBRACKET OF estandar_tipo
+     {
+            for (unsigned int i = 0; i < last.size(); i++) {
+                  insert_table_defsize(last_variable_type, last[i], atoi($6) - atoi($3) + 1);
+            }
+            last.clear();
+     }
      ;
 
 estandar_tipo : INTEGER_TIPO
@@ -137,19 +165,26 @@ subprograma_declaracion : subprograma_encabezado declaraciones subprograma_decla
 
 subprograma_encabezado : FUNCTION 
                         {
-                              inc_scope();
+                              scope++;
+                              current_scope = scope;
                         } 
                         identificador argumentos COLON estandar_tipo
                         {
-                              insert_table(last_variable_type, last[last.size() - 1]);
+                              insert_table_var_def(last_variable_type, last[0]);
+                              printf("Variable %s de tipo %d en linea %d\n", last[0].name, last_variable_type, last[0].line_used);
                               last.clear();
                         }
                         SEMICOLON
                        | PROCEDURE
                        {
-                              inc_scope();
+                              scope++;
+                              current_scope = scope;
                        } 
                        identificador argumentos SEMICOLON
+                       {
+                              insert_table_func_def(VOID, last[0]);
+                              last.clear();
+                       }
                        ;
 
 argumentos : LPAREN parametros_lista RPAREN 
@@ -159,17 +194,23 @@ argumentos : LPAREN parametros_lista RPAREN
 parametros_lista : identificador_lista COLON tipo 
                   {
                         while (last.size() > 1) {
-                              insert_table(last_variable_type, last[last.size() - 1]);
+                              insert_table_var_def(last_variable_type, last[last.size() - 1]);
                               last.pop_back();
                         }
                   }
                  | parametros_lista SEMICOLON identificador_lista COLON tipo
+                 {
+                        while (last.size() > 1) {
+                              insert_table_var_def(last_variable_type, last[last.size() - 1]);
+                              last.pop_back();
+                        }
+                  }
                  ;
 
 instruccion_compuesta : BEG instrucciones_opcionales 
                         END
                         { 
-                              dec_scope();
+                              current_scope = 0;
                         }
                         ;
 
@@ -190,69 +231,66 @@ instrucciones : variable_asignacion
               | escritura_instruccion
               ;
 
-repeticion_instruccion : WHILE 
-                        {
-                              inc_scope();
-                              
-                        } 
-                        relop_expresion DO instrucciones
-                        {
-                              dec_scope();
-                              
-                        }
-                       | FOR
-                        {
-                              inc_scope();
-                              
-                        } 
-                        for_asignacion TO expresion DO instrucciones
-                        {
-                              dec_scope();
-                              
-                        } 
-                       | FOR
-                       {
-                              inc_scope();
-                        } 
-                        for_asignacion DOWNTO expresion DO instrucciones
-                        {
-                              dec_scope();
-                        }
+repeticion_instruccion : WHILE relop_expresion DO instrucciones
+                       | FOR for_asignacion for_comportamiento expresion DO instrucciones
                        ;
+
+for_comportamiento: TO 
+                  | DOWNTO   
+                  ;
 
 lectura_instruccion : READ LPAREN identificador RPAREN
                     | READLN LPAREN identificador RPAREN
                     ;
 
 escritura_instruccion : WRITE LPAREN CADENA COMMA identificador RPAREN
+                        {
+                              for (unsigned int i = 0; i < last.size(); i++) {
+                                    insert_table_var_used(last_variable_type, last[i]);
+                              }
+                              last.clear();
+                        }
                       | WRITELN LPAREN CADENA COMMA identificador RPAREN
+                        {
+                              for (unsigned int i = 0; i < last.size(); i++) {
+                                    insert_table_var_used(last_variable_type, last[i]);
+                              }
+                              last.clear();
+                        }
                       | WRITE LPAREN CADENA RPAREN
                       | WRITELN LPAREN CADENA RPAREN
                       | WRITE LPAREN CADENA COMMA expresion RPAREN
                       | WRITELN LPAREN CADENA COMMA expresion RPAREN
                       | WRITE LPAREN identificador RPAREN
+                      {
+                              for (unsigned int i = 0; i < last.size(); i++) {
+                                    insert_table_var_used(last_variable_type, last[i]);
+                              }
+                              last.clear();
+                        }
                       | WRITELN LPAREN identificador RPAREN
+                      {
+                              for (unsigned int i = 0; i < last.size(); i++) {
+                                    insert_table_var_used(last_variable_type, last[i]);
+                              }
+                              last.clear();
+                        }
                       ;
 
-if_instruccion : IF 
-                  {
-                        inc_scope();
-                  } 
-                  relop_expresion THEN instrucciones
-                  {
-                        dec_scope();
-                  }
-               | IF 
-                  {
-                        inc_scope();
-                  }
-               relop_expresion THEN instrucciones ELSE instrucciones
-                  {
-                        dec_scope();
-                  }
+if_instruccion : IF relop_expresion THEN instrucciones instruccion_else
                ;
 
+instruccion_else: |
+                  ELSE instrucciones
+                  ;
+
 variable_asignacion : variable COLON EQUALS expresion
+                    {
+                        for (unsigned int i = 0; i < last.size(); i++) {
+                              insert_table_var_used(last_variable_type, last[i]);
+                        }
+                        last.clear();
+                    }
                     ;
 
 for_asignacion : variable_asignacion
@@ -312,20 +350,12 @@ signo : PLUS
       | /* empty */
       ;
 
-constante_entera : signo numero_entero
+constante_entera : signo NUM_ENTERO
+                 ;
 
-numero_entero : digito_no_cero numero
-              ;
-
-numero : numero DIGITO
-       | /* empty */
-       ;
-
-constante_real : signo numero_entero PERIOD numero_entero
+constante_real : signo NUM_ENTERO PERIOD NUM_ENTERO
                | signo EXP
                ;
-
-digito_no_cero : DIGITO;
 
 %%
 
@@ -335,26 +365,84 @@ int yyerror(char *s){
       return 0;
 }
 
-void inc_scope() {
-      scope = scope + "." + to_string(scope_aux + 1);
-      scope_aux = 0;
-      printf("----------Aumenta Scope: %s\n", scope.c_str());
+void insert_table_var_def(Var_Types type, variable_line identifier) {
+      unsigned long index;
+      long collision_list_position;
+      ht_search(ht, identifier.name, index, collision_list_position);
+      if (index != -1 && ht_is_scope_already_declared(ht, identifier.name, index, scope)) {
+            printf("Error: variable %s ya declarada en linea %d\n", identifier.name, identifier.line_used);
+            yyerror("Error: variable ya declarada");
+      }
+      else {
+            insert_table(type, identifier);
+      }
 }
 
-void dec_scope() {
-      string scope_last = scope;
-      scope_last = scope_last.substr(scope_last.find_last_of('.') + 1, scope_last.length() - 1);
-      printf("Scope last: %s", scope_last.c_str());
-      if (scope_last.length() > 0)
-            scope_aux = std::stoi(scope_last);
-      scope = scope.substr(0, scope.find_last_of("."));
-      printf("----------Disminye Scope: %s aux = %d\n", scope.c_str(), scope_aux);
+void insert_table_var_used(Var_Types type, variable_line identifier) {
+      unsigned long index;
+      long collision_list_position;
+      ht_search(ht, identifier.name, index, collision_list_position);
+      if (index == -1) {
+            printf("Error: variable %s no declarada en linea %d\n", identifier.name, identifier.line_used);
+            yyerror("Error: variable no declarada");
+      }
+      else if (!ht_is_scope_less_than_defined(ht, identifier.name, index, current_scope)) {
+            printf("Error: variable %s en scope diferente en linea %d\n", identifier.name, identifier.line_used);
+            yyerror("Error: variable en scope diferente");
+      }
+      else {
+            ht_insert_lines_used(ht, identifier.name, index, identifier.line_used, current_scope);
+      }
+}
+
+void insert_table_func_def(Var_Types type, variable_line identifier) {
+      unsigned short temp_scope = current_scope;
+      current_scope = 0;
+      insert_table_var_def(type, identifier);
+      current_scope = temp_scope;
 }
 
 void insert_table(Var_Types type, variable_line identifier) {
       char* nombre = identifier.name;
       unsigned long lugar = identifier.line_used;
-      printf("Insertando a HT: %s\n", nombre);
+      unsigned long bytesize = 0;
+      switch (type) {
+            case BOOLEAN:
+                  bytesize = 1;
+                  break;
+            case INTEGER:
+                  bytesize = 4;
+                  break;
+            case FLOAT:
+                  bytesize = 6;
+                  break;
+            case VOID:
+                  bytesize = 0;
+                  break;
+            case STRING:
+                  bytesize = 256;
+                  break;
+            case CONST_ENTERO:
+                  bytesize = 4;
+                  break;
+            case CONST_REAL:
+                  bytesize = 6;
+                  break;
+            case CONST_CADENA:
+                  bytesize = 256;
+                  break;
+            default:
+                  bytesize = 0;
+                  break;
+      }
+      data_value datos = {mem_acum, type, bytesize, lugar, "", current_scope};
+      ht_insert(ht, nombre, datos);
+      mem_acum += bytesize;
+}
+
+void insert_table_defsize(Var_Types type, variable_line identifier, unsigned long size) {
+      char* nombre = identifier.name;
+      unsigned long lugar = identifier.line_used;
       unsigned long bytesize = 0;
       switch (type) {
             case BOOLEAN:
@@ -376,11 +464,9 @@ void insert_table(Var_Types type, variable_line identifier) {
                   bytesize = 0;
                   break;
       }
-      char* scope_char = new char[scope.length() + 1];
-      strcpy(scope_char, scope.c_str());
-      ht_insert(ht, nombre, {mem_acum, type, bytesize, lugar, scope_char, scope_char});
-      mem_acum += bytesize;
-      printf("Insertado correctamente\n");
+      bytesize *= size;
+      data_value datos = {mem_acum, type, bytesize, lugar, nombre, scope};
+      ht_insert(ht, nombre, datos);      mem_acum += bytesize;
 }
 
 int main( int argc, char* argv[] )

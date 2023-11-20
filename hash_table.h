@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <string>
 
 using namespace std;
 
@@ -23,8 +22,7 @@ unsigned long hash_function(const char* str)
     return i % CAPACITY;
 }
 
-enum Var_Types { BOOLEAN, INTEGER, FLOAT, STRING, VOID };
-enum Var_concept { VARIABLE, ARR, FUNC, PROC, CONSTANT };
+enum Var_Types { BOOLEAN, INTEGER, FLOAT, STRING, VOID, CONST_ENTERO, CONST_REAL, CONST_CADENA };
 
 struct data_value
 {
@@ -33,7 +31,7 @@ struct data_value
     unsigned long bytes_size;
     unsigned long source_line_definition;
     char* source_lines_used;
-    char* scope;
+    unsigned short scope;
 };
 
 // Defines the HashTable item.
@@ -92,7 +90,6 @@ void ht_insert(HashTable& table, const char* value, data_value data)
     item->value.bytes_size = data.bytes_size;
     item->value.type = data.type;
     item->value.scope = data.scope;
-    printf("************************Scope: %s\n", item->value.scope);
     item->value.source_line_definition = data.source_line_definition;
     item->value.source_lines_used = data.source_lines_used;
     // Computes the index.
@@ -130,6 +127,69 @@ bool ht_search(HashTable table, const char* key, unsigned long & index, long & c
     return false;
 }
 
+bool ht_is_scope_already_declared(HashTable table, const char* key, unsigned long index, unsigned short scope) {
+    Ht_item* item = table.items[index];
+    if (item != NULL)
+    {
+        if(strcmp(item->identifier_string, key) == 0 && item->value.scope == scope)
+            return true;
+        for(int i = 0; i < table.size_of_collision_list[index]; i++)
+        {
+            if(strcmp(table.collision_list[index][i]->identifier_string, key) == 0 && item->value.scope == scope)
+                return true;
+        }
+    }
+    return false;
+}
+
+bool ht_is_scope_less_than_defined(HashTable table, const char* key, unsigned long index, unsigned short scope) {
+    Ht_item* item = table.items[index];
+    if (item != NULL)
+    {
+        if(strcmp(item->identifier_string, key) == 0 && item->value.scope <= scope)
+            return true;
+        for(int i = 0; i < table.size_of_collision_list[index]; i++)
+        {
+            if(strcmp(table.collision_list[index][i]->identifier_string, key) == 0 && item->value.scope < scope)
+                return true;
+        }
+    }
+    return false;
+}
+
+
+
+void ht_insert_lines_used(HashTable& table, const char* key, unsigned long index, unsigned long line, unsigned short scope){
+    Ht_item* item = table.items[index];
+    if (item != NULL)
+    {
+        if (strcmp(item->identifier_string, key) == 0)
+        {
+            printf("Encontre el item\n");
+            if (item->value.scope == scope)
+            {
+                printf("El scope es igual\n");
+                char* new_line = (char*)malloc(sizeof(char) * MAX_LINES_REFERENCE);
+                sprintf(new_line, "%s %lu",item->value.source_lines_used, line);
+                item->value.source_lines_used = new_line;
+            }
+            else {
+                printf("El scope es diferente\n");
+                for (unsigned int i = 0; i < table.size_of_collision_list[index]; i++)
+                {
+                    if (strcmp(table.collision_list[index][i]->identifier_string, key) == 0 && table.collision_list[index][i]->value.scope == scope)
+                    {
+                        printf("Encontre el item en la lista de colisiones\n");
+                        char* new_line = (char*)malloc(sizeof(char) * MAX_LINES_REFERENCE);
+                        sprintf(new_line, "%s %lu",table.collision_list[index][i]->value.source_lines_used, line);
+                        table.collision_list[index][i]->value.source_lines_used = new_line;
+                    }
+                }
+            }
+        }
+    }
+}
+
 void print_table(HashTable table)
 {
     printf("\nHash Table\n-------------------\n");
@@ -137,7 +197,7 @@ void print_table(HashTable table)
     for (int i = 0; i < CAPACITY; i++)
         if (table.items[i])
         {
-            printf("Index:%d, Key:%s, Mem_assign: %d, Type: %d, Byte_Size: %d, Line_def: %d, Scope: %s, Lines_used: %s\n", 
+            printf("Index:%d, Key:%s, Mem_assign: %d, Type: %d, Byte_Size: %d, Line_def: %d, Scope: %d, Lines_used:%s\n", 
             i, 
             table.items[i]->identifier_string, 
             table.items[i]->value.memory_assign,
@@ -147,7 +207,7 @@ void print_table(HashTable table)
             table.items[i]->value.scope,
             table.items[i]->value.source_lines_used);
             for (int it = 0; it < table.size_of_collision_list[i]; it++)
-                printf("Index:%d, Collision list position:%d, Key:%s, Mem_assign: %d, Type: %d, Byte_Size: %d, Line_def: %d, Scope: %s, Lines_used: %s\n", 
+                printf("Index:%d, Collision list position:%d, Key:%s, Mem_assign: %d, Type: %d, Byte_Size: %d, Line_def: %d, Scope: %d, Lines_used:%s\n", 
                 i, 
                 it, 
                 table.collision_list[i][it]->identifier_string, 
