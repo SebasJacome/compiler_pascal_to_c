@@ -96,7 +96,7 @@ DELIMITADOR [\t\r\f ]
 };
 
 {DIGITO_NO_CERO}{DIGITO}* {
-    yylval.cadena = yytext;
+    yylval.entero = atoi(yytext);
     return NUM_ENTERO;
 }
 

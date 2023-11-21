@@ -165,24 +165,39 @@ void ht_insert_lines_used(HashTable& table, const char* key, unsigned long index
     {
         if (strcmp(item->identifier_string, key) == 0)
         {
-            printf("Encontre el item\n");
             if (item->value.scope == scope)
             {
-                printf("El scope es igual\n");
                 char* new_line = (char*)malloc(sizeof(char) * MAX_LINES_REFERENCE);
                 sprintf(new_line, "%s %lu",item->value.source_lines_used, line);
                 item->value.source_lines_used = new_line;
             }
             else {
-                printf("El scope es diferente\n");
                 for (unsigned int i = 0; i < table.size_of_collision_list[index]; i++)
                 {
                     if (strcmp(table.collision_list[index][i]->identifier_string, key) == 0 && table.collision_list[index][i]->value.scope == scope)
                     {
-                        printf("Encontre el item en la lista de colisiones\n");
                         char* new_line = (char*)malloc(sizeof(char) * MAX_LINES_REFERENCE);
                         sprintf(new_line, "%s %lu",table.collision_list[index][i]->value.source_lines_used, line);
                         table.collision_list[index][i]->value.source_lines_used = new_line;
+                        return;
+                    }
+                }                
+                if (item->value.scope == 0)
+                {
+                    char* new_line = (char*)malloc(sizeof(char) * MAX_LINES_REFERENCE);
+                    sprintf(new_line, "%s %lu",item->value.source_lines_used, line);
+                    item->value.source_lines_used = new_line;
+                }
+                else {
+                    for (unsigned int i = 0; i < table.size_of_collision_list[index]; i++)
+                    {
+                        if (strcmp(table.collision_list[index][i]->identifier_string, key) == 0 && table.collision_list[index][i]->value.scope == 0)
+                        {
+                            char* new_line = (char*)malloc(sizeof(char) * MAX_LINES_REFERENCE);
+                            sprintf(new_line, "%s %lu",table.collision_list[index][i]->value.source_lines_used, line);
+                            table.collision_list[index][i]->value.source_lines_used = new_line;
+                            return;
+                        }
                     }
                 }
             }

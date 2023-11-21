@@ -78,19 +78,19 @@
      SEMICOLON = 294,
      COMMA = 295,
      PERIOD = 296,
-     IDENTIFICADOR = 297,
-     NUM_ENTERO = 298,
-     INTEGER_TIPO = 299,
-     REAL_TIPO = 300,
-     STRING_TIPO = 301,
-     BOOLEAN_TIPO = 302,
-     EXP = 303,
-     CADENA = 304,
-     LESSTHAN = 305,
-     GREATERTHAN = 306,
-     LESSTHANEQUALS = 307,
-     GREATERTHANEQUALS = 308,
-     NOTEQUALS = 309
+     INTEGER_TIPO = 297,
+     REAL_TIPO = 298,
+     STRING_TIPO = 299,
+     BOOLEAN_TIPO = 300,
+     EXP = 301,
+     CADENA = 302,
+     LESSTHAN = 303,
+     GREATERTHAN = 304,
+     LESSTHANEQUALS = 305,
+     GREATERTHANEQUALS = 306,
+     NOTEQUALS = 307,
+     IDENTIFICADOR = 308,
+     NUM_ENTERO = 309
    };
 #endif
 
@@ -102,6 +102,8 @@ typedef union YYSTYPE
 
 
       char* cadena;
+      int entero;
+      struct Nodo* nodo;
 
 
 
