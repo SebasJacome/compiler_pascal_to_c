@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+#include <vector>
 
 #define MAX_HIJOS_NODO 3
 
@@ -10,7 +11,7 @@ enum tipoNodo {
     DECLARACIONES_CONSTANTES, TIPO, SUBPROGRAMA_DECLARACIONES, SUBPROGRAMA_DECLARACION, SUBPROGRAMA_ENCABEZADO, ARGUMENTOS, 
     PARAMETROS, PARAMETROS_LISTA, INSTRUCCION_COMPUESTA, INSTRUCCIONES_OPCIONALES, INSTRUCCIONES_LISTA, INSTRUCCIONES, 
     REPETICION_INSTRUCCION, LECTURA_INSTRUCCION, ESCRITURA_INSTRUCCION, IF_INSTRUCCION, INSTRUCCION_ELSE, VARIABLE_ASIGNACION, 
-    FOR_ASIGNACION, VARIABLE, PROCEDURE_INSTRUCCION, RELOP_EXPRESION, RELOP_AND, RELOP_NOT, 
+    FOR_ASIGNACION, VARIABLE, PROCEDURE_INSTRUCCION, RELOP_EXPRESION, RELOP_AND, RELOP_NOT, CADENA_CONST,
     RELOP_PAREN, RELOP_EXPRESION_SIMPLE, EXPRESION_LISTA, EXPRESION, TERMINO, LLAMADO_FUNCION, 
     FACTOR, CONSTANTE_ENTERA, CONSTANTE_REAL, ID, RELOP, ADDOP, 
     MULOP, ESTANDAR_TIPO, FOR_COMPORTAMIENTO, SIGNO
@@ -20,52 +21,33 @@ std::string tipoTexto(tipoNodo tipo);
 
 typedef struct Nodo Nodo;
 
-struct Nodo{   
+struct Nodo {
     tipoNodo tipo;
-    Nodo* padre;
-    Nodo* hermano;
-    Nodo* hijo[MAX_HIJOS_NODO];
-    union
-    {
-        int valorEntero;
-        double valorReal;
-        char* valorCadena;
-    } atributos;
+    // Nodo* hermano;
+    std::vector<Nodo*> hijos;
+    std::string valorCadena;
+
+    Nodo(tipoNodo t) : tipo(t), hijos(MAX_HIJOS_NODO, nullptr) {}
+
+    ~Nodo() {
+        for (auto hijo : hijos) {
+            delete hijo;
+        }
+    }
 };
 
-Nodo* crearNodo() {
-    Nodo* temp = (struct Nodo*)malloc(sizeof(Nodo*));
-    temp->tipo = SIN_TIPO;
-    temp->atributos.valorCadena = NULL;
-    temp->padre = NULL;
-    temp->hermano = NULL;
-    temp->hijo[0] = NULL;
-    temp->hijo[1] = NULL;
-    temp->hijo[2] = NULL;
-    
-    return temp;
+Nodo* crearNodo(tipoNodo tipo) {
+    return new Nodo(tipo);
 }
 
-Nodo* iniciarNodo(Nodo* temp) {
-    temp->tipo = SIN_TIPO;
-    temp->atributos.valorCadena = NULL;
-    temp->padre = NULL;
-    temp->hermano = NULL;
-    temp->hijo[0] = NULL;
-    temp->hijo[1] = NULL;
-    temp->hijo[2] = NULL;
-    
-    return temp;
+void insertarNodoHijos(Nodo* nodo, Nodo* nodoHijo1 = NULL, Nodo* nodoHijo2 = NULL, Nodo* nodoHijo3 = NULL) {
+    if (nodoHijo1) nodo->hijos[0] = nodoHijo1;
+    if (nodoHijo2) nodo->hijos[1] = nodoHijo2;
+    if (nodoHijo3) nodo->hijos[2] = nodoHijo3;   
 }
 
-void insertarNodoHijos(Nodo* nodo, Nodo* nodoHijo1, Nodo* nodoHijo2, Nodo* nodoHijo3) {
-    if (nodoHijo1) nodo->hijo[0] = nodoHijo1;
-    if (nodoHijo2) nodo->hijo[1] = nodoHijo2;
-    if (nodoHijo3) nodo->hijo[2] = nodoHijo3;   
-}
-
-void insertarNodoHermano(Nodo* nodo, Nodo* nodoHermano) {
-    nodo->hermano = nodoHermano;
+void eliminarArbol(Nodo* nodo) {
+    delete nodo;
 }
 
 int contador = 0;
@@ -75,14 +57,36 @@ void imprimirArbol(Nodo* nodo){
     Nodo* temp;
     if(nodo){
         temp = nodo;
-        printf("Nodo de tipo: %s\n", tipoTexto(temp->tipo).c_str());
+        printf("\tTipo: %s\n", tipoTexto(temp->tipo).c_str());
+        if (temp->valorCadena != "") {
+            printf("\tValor: %s\n", temp->valorCadena.c_str());
+        }
         for(size_t i = 0; i < MAX_HIJOS_NODO; i++){
-                if(temp->hijo[i] != NULL){ 
-                    imprimirArbol(temp->hijo[i]);
+                if(temp->hijos[i] != NULL){ 
+                    imprimirArbol(temp->hijos[i]);
                 }
         }
     }
     
+}
+
+void imprimirArbolSoloID(Nodo* nodo){
+    Nodo* temp;
+    if(nodo){
+        temp = nodo;
+        if (temp->valorCadena != "") {
+            printf("Nodo: %d\n", contador++);
+            printf("\tTipo: %s\n", tipoTexto(temp->tipo).c_str());
+            printf("\tValor: %s\n", temp->valorCadena.c_str());
+        }
+        for(size_t i = 0; i < MAX_HIJOS_NODO; i++){
+                if(temp->hijos[i] != NULL){ 
+                    imprimirArbolSoloID(temp->hijos[i]);
+                }
+        }
+    }
+    
+
 }
 
 std::string tipoTexto(tipoNodo tipo) {
@@ -180,6 +184,6 @@ std::string tipoTexto(tipoNodo tipo) {
         case SIGNO:
             return "SIGNO";
         default:
-            return "ERROR";
+            return "ERROR: TIPO: " + std::to_string(tipo);
     }
 }

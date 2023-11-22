@@ -979,7 +979,7 @@ YY_RULE_SETUP
 case 55:
 YY_RULE_SETUP
 {
-    yylval.entero = atoi(yytext);
+    yylval.cadena = yytext;
     return NUM_ENTERO;
 }
 	YY_BREAK

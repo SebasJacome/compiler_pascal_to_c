@@ -44,16 +44,14 @@
       struct Nodo* nodo;
 }
 
-%token <nodo> 
-      PROGRAM VAR CONST FUNCTION PROCEDURE BEG END ARRAY OF IF THEN ELSE 
+%token <cadena> 
+      PROGRAM VAR CONST FUNCTION PROCEDURE BEG END OF IF THEN ELSE 
       WHILE DO FOR TO DOWNTO READ READLN WRITE WRITELN AND OR NOT DIV MOD 
       LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS ASTERISK SLASH 
-      EQUALS COLON SEMICOLON COMMA PERIOD  
-      INTEGER_TIPO REAL_TIPO STRING_TIPO BOOLEAN_TIPO
+      EQUALS COLON SEMICOLON COMMA PERIOD
       EXP CADENA LESSTHAN GREATERTHAN LESSTHANEQUALS GREATERTHANEQUALS NOTEQUALS
-
-%token <cadena> IDENTIFICADOR
-%token <entero> NUM_ENTERO
+      IDENTIFICADOR ARRAY INTEGER_TIPO REAL_TIPO STRING_TIPO BOOLEAN_TIPO
+      NUM_ENTERO
 
 %type <nodo> 
       programa contenido_programa relop addop mulop identificador_lista identificador declaraciones
@@ -63,7 +61,7 @@
       lectura_instruccion escritura_instruccion if_instruccion instruccion_else variable_asignacion
       for_asignacion variable procedure_instruccion relop_expresion relop_and relop_not relop_paren
       relop_expresion_simple expresion_lista expresion termino llamado_funcion factor signo constante_entera
-      constante_real
+      constante_real cadena
 
 %%
 
@@ -85,31 +83,25 @@ programa : PROGRAM
             } 
             RPAREN SEMICOLON contenido_programa PERIOD
             {
-                  if (current_scope != 0) yyerror("Scope error, no se cerro el scope actual");
+                  if (current_scope != 0) {
+                        std::string errorS = "Error, algun scope no se cerro correctamente";
+                        char* errorC = new char[errorS.length() + 1];
+                        strcpy(errorC, errorS.c_str());
+                        yyerror(errorC);
+                  }
 
-                  Nodo* raiz = crearNodo();
-                  raiz->tipo = PROGRAMA;
-                  // insertarNodoHijos(raiz, $3, $6, $10);
-                  Nodo* prueba = crearNodo();
-                  prueba->tipo = SIN_TIPO;
-                  raiz->hijo[0] = prueba;
-                  raiz->hijo[1] = prueba;
-                  raiz->hijo[2] = $10;
+                  Nodo* raiz = crearNodo(PROGRAMA);
+                  insertarNodoHijos(raiz, $3, $6, $10);
                   $$ = raiz; 
-                  imprimirArbol(raiz);
+                  //imprimirArbol(raiz);
+                  imprimirArbolSoloID(raiz);
             }
             ;
 
 contenido_programa : declaraciones subprograma_declaraciones instruccion_compuesta
                    {
-                        Nodo* nodo = crearNodo();
-                        nodo->tipo = CONTENIDO_PROGRAMA;
-                        //insertarNodoHijos(nodo, $1, $2, $3);
-                        Nodo* prueba = crearNodo();
-                        prueba->tipo = SIN_TIPO;
-                        nodo->hijo[0] = prueba;
-                        nodo->hijo[1] = prueba;
-                        nodo->hijo[2] = prueba;
+                        Nodo* nodo = crearNodo(CONTENIDO_PROGRAMA);
+                        insertarNodoHijos(nodo, $1, $2, $3);
                         $$ = nodo;
                    }
                     ;
@@ -120,90 +112,136 @@ identificador : IDENTIFICADOR
                         int var_line = @1.last_line;
                         last.push_back({var_name, var_line}); 
 
-                        // ARBOL
+                        Nodo* nodo = crearNodo(ID);
+                        nodo->valorCadena = strdup($1);
+                        $$ = nodo;
                             
                   }
               ;
 
 relop : AND 
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       | OR 
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       | EQUALS 
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       | LESSTHAN 
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       | GREATERTHAN 
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       | LESSTHANEQUALS 
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       | GREATERTHANEQUALS 
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       | NOTEQUALS
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       ;
 
 addop : PLUS 
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(ADDOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       | MINUS
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(ADDOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       ;
 
 mulop : ASTERISK 
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(MULOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       | SLASH 
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(MULOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       | DIV 
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(MULOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       | MOD
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(MULOP);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
+      }
+      ;
+
+cadena: CADENA
+      {
+            Nodo* nodo = crearNodo(CADENA_CONST);
+            nodo->valorCadena = strdup($1);
+            $$ = nodo;
       }
       ;
 
 identificador_lista : identificador
                     {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(IDENTIFICADOR_LISTA);
+                        insertarNodoHijos(nodo, $1);
+                        $$ = nodo;
                     }
                     | identificador_lista COMMA identificador
                     {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(IDENTIFICADOR_LISTA);
+                        insertarNodoHijos(nodo, $1, $3);
+                        $$ = nodo;
                     }
                     ;
 
 declaraciones : declaraciones_variables
               {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(DECLARACIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | declaraciones_constantes
               {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(DECLARACIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               ;
 
@@ -214,11 +252,13 @@ declaraciones_variables : declaraciones_variables VAR identificador_lista COLON 
                               }
                               last.clear();
 
-                              // ARBOL
+                              Nodo* nodo = crearNodo(DECLARACIONES_VARIABLES);
+                              insertarNodoHijos(nodo, $1, $3, $5);
+                              $$ = nodo;
                         }
                         | /* empty */
                         {
-                              // ARBOL
+                              $$ = NULL;
                         }
                         ;
 
@@ -229,7 +269,9 @@ declaraciones_constantes : declaraciones_constantes CONST identificador EQUALS c
                               }
                               last.clear();
 
-                              // ARBOL
+                              Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                              insertarNodoHijos(nodo, $1, $3, $5);
+                              $$ = nodo;
                          }
                          | declaraciones_constantes CONST identificador EQUALS constante_real SEMICOLON
                          {
@@ -238,24 +280,33 @@ declaraciones_constantes : declaraciones_constantes CONST identificador EQUALS c
                               }
                               last.clear();
 
-                              // ARBOL
+                              Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                              insertarNodoHijos(nodo, $1, $3, $5);
+                              $$ = nodo;
                         }
-                         | declaraciones_constantes CONST identificador EQUALS CADENA SEMICOLON
+                         | declaraciones_constantes CONST identificador EQUALS cadena SEMICOLON
                          {
                               for(unsigned int i = 0; i < last.size(); i++) {
                                     insert_table_var_def(CONST_CADENA, last[i]);
                               }
                               last.clear();
 
-                              // ARBOL
+                              Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                              insertarNodoHijos(nodo, $1, $3);
+                              $$ = nodo;
                          }
                          | /* empty */
                          {
-                              // ARBOL
+                              $$ = NULL;
                          }
                          ;
 
 tipo : estandar_tipo
+     {
+      Nodo* nodo = crearNodo(TIPO);
+      insertarNodoHijos(nodo, $1);
+      $$ = nodo;
+     }
      | ARRAY LBRACKET NUM_ENTERO PERIOD PERIOD NUM_ENTERO RBRACKET OF estandar_tipo
      {
       for (unsigned int i = 0; i < last.size(); i++) {
@@ -263,7 +314,10 @@ tipo : estandar_tipo
       }
       last.clear();
 
-      // ARBOL
+      Nodo* nodo = crearNodo(TIPO);
+      nodo->valorCadena = strdup($1);
+      insertarNodoHijos(nodo, $9);
+      $$ = nodo;
      }
      ;
 
@@ -271,45 +325,57 @@ estandar_tipo : INTEGER_TIPO
               { 
                   last_variable_type = INTEGER;
 
-                  // ARBOL
+                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  nodo->valorCadena = strdup($1);
+                  $$ = nodo;
               }
               | REAL_TIPO
               { 
                   last_variable_type = FLOAT;
 
-                  // ARBOL
+                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  nodo->valorCadena = strdup($1);
+                  $$ = nodo;
               }
               | STRING_TIPO
               { 
                   last_variable_type = STRING;
 
-                  // ARBOL
+                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  nodo->valorCadena = strdup($1);
+                  $$ = nodo;
               }
               | BOOLEAN_TIPO
               { 
                   last_variable_type = BOOLEAN;
 
-                  // ARBOL
+                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  nodo->valorCadena = strdup($1);
+                  $$ = nodo;
               }
               ;
 
 subprograma_declaraciones : subprograma_declaraciones subprograma_declaracion SEMICOLON
                           {
-                              // ARBOL
+                              Nodo* nodo = crearNodo(SUBPROGRAMA_DECLARACIONES);
+                              insertarNodoHijos(nodo, $1, $2);
+                              $$ = nodo;
                           }
                           | /* empty */
                           {
-                              // ARBOL
+                              $$ = NULL;
                           }
                           ;
 
 subprograma_declaracion : subprograma_encabezado declaraciones instruccion_compuesta
                         {
-                              // ARBOL
+                              Nodo* nodo = crearNodo(SUBPROGRAMA_DECLARACION);
+                              insertarNodoHijos(nodo, $1, $2, $3);
+                              $$ = nodo;
                         }
                         ;
 
-subprograma_encabezado : FUNCTION 
+subprograma_encabezado  : FUNCTION 
                         {
                               scope++;
                               current_scope = scope;
@@ -321,29 +387,37 @@ subprograma_encabezado : FUNCTION
                         }
                         SEMICOLON
                         {
-                              // ARBOL
+                              Nodo* nodo = crearNodo(SUBPROGRAMA_ENCABEZADO);
+                              nodo->valorCadena = strdup("function");
+                              insertarNodoHijos(nodo, $3, $4, $6);
+                              $$ = nodo;
                         }
-                       | PROCEDURE
-                       {
+                        | PROCEDURE
+                        {
                               scope++;
                               current_scope = scope;
-                       } 
-                       identificador argumentos SEMICOLON
-                       {
+                        } 
+                        identificador argumentos SEMICOLON
+                        {
                               insert_table_func_def(VOID, last[0]);
                               last.clear();
 
-                              // ARBOL
+                              Nodo* nodo = crearNodo(SUBPROGRAMA_ENCABEZADO);
+                              nodo->valorCadena = strdup("procedure");
+                              insertarNodoHijos(nodo, $3, $4);
+                              $$ = nodo;
                        }
                        ;
 
 argumentos : LPAREN parametros_lista RPAREN 
            {
-            // ARBOL
+            Nodo* nodo = crearNodo(ARGUMENTOS);
+            insertarNodoHijos(nodo, $2);
+            $$ = nodo;
            }
            | /* empty */
            {
-            // ARBOL
+            $$ = NULL;
            }
            ;
 
@@ -354,7 +428,9 @@ parametros_lista : identificador_lista COLON tipo
                         last.pop_back();
                   }
 
-                  // ARBOL
+                  Nodo* nodo = crearNodo(PARAMETROS_LISTA);
+                  insertarNodoHijos(nodo, $1, $3);
+                  $$ = nodo;
                  }
                  | parametros_lista SEMICOLON identificador_lista COLON tipo
                  {
@@ -363,7 +439,9 @@ parametros_lista : identificador_lista COLON tipo
                         last.pop_back();
                   }
 
-                  // ARBOL
+                  Nodo* nodo = crearNodo(PARAMETROS_LISTA);
+                  insertarNodoHijos(nodo, $1, $3, $5);
+                  $$ = nodo;
                  }
                  ;
 
@@ -372,123 +450,179 @@ instruccion_compuesta : BEG instrucciones_opcionales
                         { 
                               current_scope = 0;
 
-                              // ARBOL
+                              Nodo* nodo = crearNodo(INSTRUCCION_COMPUESTA);
+                              insertarNodoHijos(nodo, $2);
+                              $$ = nodo;
                         }
                         ;
 
 instrucciones_opcionales : instrucciones_lista
                          {
-                              // ARBOL
+                              Nodo* nodo = crearNodo(INSTRUCCIONES_OPCIONALES);
+                              insertarNodoHijos(nodo, $1);
+                              $$ = nodo;
                          }
                          | /* empty */
                          {
-                              // ARBOL
+                              $$ = NULL;
                          }
                          ;
 
 instrucciones_lista : instrucciones
                     {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(INSTRUCCIONES_LISTA);
+                        insertarNodoHijos(nodo, $1);
+                        $$ = nodo;
                     }
                     | instrucciones_lista SEMICOLON instrucciones
                     {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(INSTRUCCIONES_LISTA);
+                        insertarNodoHijos(nodo, $1, $3);
+                        $$ = nodo;
                     }
                     ;
 
 instrucciones : variable_asignacion
               {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | procedure_instruccion
               {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | instruccion_compuesta
               {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | if_instruccion
               {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | repeticion_instruccion
               {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | lectura_instruccion
               {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | escritura_instruccion
               {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               ;
 
 repeticion_instruccion : WHILE relop_expresion DO instrucciones
                        {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(REPETICION_INSTRUCCION);
+                        nodo->valorCadena = strdup("while");
+                        insertarNodoHijos(nodo, $2, $4);
+                        $$ = nodo;
                        }
                        | FOR for_asignacion for_comportamiento expresion DO instrucciones
                        {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(REPETICION_INSTRUCCION);
+                        nodo->valorCadena = strdup("for");
+                        insertarNodoHijos(nodo, $2, $4);
+                        $$ = nodo;
                        }
                        ;
 
 for_comportamiento: TO 
                   {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(FOR_COMPORTAMIENTO);
+                        nodo->valorCadena = strdup($1);
+                        $$ = nodo;
                   }
                   | DOWNTO   
                   {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(FOR_COMPORTAMIENTO);
+                        nodo->valorCadena = strdup($1);
+                        $$ = nodo;
                   }
                   ;
 
 lectura_instruccion : READ LPAREN identificador RPAREN
                     {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(LECTURA_INSTRUCCION);
+                        nodo->valorCadena = strdup("read");
+                        insertarNodoHijos(nodo, $3);
+                        $$ = nodo;
                     }
                     | READLN LPAREN identificador RPAREN
                     {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(LECTURA_INSTRUCCION);
+                        nodo->valorCadena = strdup("readln");
+                        insertarNodoHijos(nodo, $3);
+                        $$ = nodo;
                     }
                     ;
 
-escritura_instruccion : WRITE LPAREN CADENA COMMA identificador RPAREN
+escritura_instruccion : WRITE LPAREN cadena COMMA identificador RPAREN
                       {
                         for (unsigned int i = 0; i < last.size(); i++) {
                               insert_table_var_used(last_variable_type, last[i]);
                         }
                         last.clear();
 
-                        // ARBOL
+                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        nodo->valorCadena = strdup("write");
+                        insertarNodoHijos(nodo, $3, $5);
+                        $$ = nodo;
                       }
-                      | WRITELN LPAREN CADENA COMMA identificador RPAREN
+                      | WRITELN LPAREN cadena COMMA identificador RPAREN
                       {
                         for (unsigned int i = 0; i < last.size(); i++) {
                               insert_table_var_used(last_variable_type, last[i]);
                         }
                         last.clear();
 
-                        // ARBOL
+                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        nodo->valorCadena = strdup("write");
+                        insertarNodoHijos(nodo, $3, $5);
+                        $$ = nodo;
                       }
-                      | WRITE LPAREN CADENA RPAREN
+                      | WRITE LPAREN cadena RPAREN
                       {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        nodo->valorCadena = strdup("write");
+                        insertarNodoHijos(nodo, $3);
+                        $$ = nodo;
                       }
-                      | WRITELN LPAREN CADENA RPAREN
+                      | WRITELN LPAREN cadena RPAREN
                       {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        nodo->valorCadena = strdup("writeln");
+                        insertarNodoHijos(nodo, $3);
+                        $$ = nodo;
                       }
-                      | WRITE LPAREN CADENA COMMA expresion RPAREN
+                      | WRITE LPAREN cadena COMMA expresion RPAREN
                       {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        nodo->valorCadena = strdup("write");
+                        insertarNodoHijos(nodo, $3, $5);
+                        $$ = nodo;
                       }
-                      | WRITELN LPAREN CADENA COMMA expresion RPAREN
+                      | WRITELN LPAREN cadena COMMA expresion RPAREN
                       {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        nodo->valorCadena = strdup("writeln");
+                        insertarNodoHijos(nodo, $3, $5);
+                        $$ = nodo;
                       }
                       | WRITE LPAREN identificador RPAREN
                       {
@@ -497,7 +631,10 @@ escritura_instruccion : WRITE LPAREN CADENA COMMA identificador RPAREN
                         }
                         last.clear();
 
-                        // ARBOL
+                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        nodo->valorCadena = strdup("write");
+                        insertarNodoHijos(nodo, $3);
+                        $$ = nodo;
                       }
                       | WRITELN LPAREN identificador RPAREN
                       {
@@ -506,23 +643,32 @@ escritura_instruccion : WRITE LPAREN CADENA COMMA identificador RPAREN
                         }
                         last.clear();
 
-                        // ARBOL
+                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        nodo->valorCadena = strdup("writeln");
+                        insertarNodoHijos(nodo, $3);
+                        $$ = nodo;
                        }
                       ;
 
 if_instruccion : IF relop_expresion THEN instrucciones instruccion_else
                {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(IF_INSTRUCCION);
+                  nodo->valorCadena = strdup("if");
+                  insertarNodoHijos(nodo, $2, $4, $5);
+                  $$ = nodo;
                }
                ;
 
 instruccion_else: ELSE instrucciones
                   {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(IF_INSTRUCCION);
+                        nodo->valorCadena = strdup("else");
+                        insertarNodoHijos(nodo, $2);
+                        $$ = nodo;
                   }
                   | /* empty */
                   {
-                        // ARBOL
+                        $$ = NULL;
                   }
                   ;
 
@@ -533,177 +679,250 @@ variable_asignacion : variable COLON EQUALS expresion
                         }
                         last.clear();
 
-                        // ARBOL
+                        Nodo* nodo = crearNodo(VARIABLE_ASIGNACION);
+                        insertarNodoHijos(nodo, $1, $4);
+                        $$ = nodo;
                     }
                     ;
 
 for_asignacion : variable_asignacion
                {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(FOR_ASIGNACION);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
                }
                | variable
                {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(FOR_ASIGNACION);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
                }
                ;
 
 variable : identificador
          {
-            // ARBOL
+            Nodo* nodo = crearNodo(VARIABLE);
+            insertarNodoHijos(nodo, $1);
+            $$ = nodo;
          }
          | identificador LBRACKET expresion RBRACKET
          {
-            // ARBOL
+            Nodo* nodo = crearNodo(VARIABLE);
+            insertarNodoHijos(nodo, $1, $3);
+            $$ = nodo;
          }
          ;
 
 procedure_instruccion : identificador 
                       {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(PROCEDURE_INSTRUCCION);
+                        insertarNodoHijos(nodo, $1);
+                        $$ = nodo;
                       }
                       | identificador LPAREN expresion_lista RPAREN
                       {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(PROCEDURE_INSTRUCCION);
+                        insertarNodoHijos(nodo, $1, $3);
+                        $$ = nodo;
                       }
 
 relop_expresion : relop_expresion OR relop_and 
                 {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(RELOP_EXPRESION);
+                  insertarNodoHijos(nodo, $1, $3);
+                  $$ = nodo;
                 }
                 | relop_and
                 {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(RELOP_EXPRESION);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
                 }
                 ;
 
 relop_and : relop_and AND relop_not 
           {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP_AND);
+            insertarNodoHijos(nodo, $1, $3);
+            $$ = nodo;
           }
           | relop_not
           {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP_AND);
+            insertarNodoHijos(nodo, $1);
+            $$ = nodo;
           }
           ;
 
 relop_not : NOT relop_not
           {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP_NOT);
+            insertarNodoHijos(nodo, $2);
+            $$ = nodo;
           }
           | relop_paren
           {
-            // ARBOL
+            Nodo* nodo = crearNodo(RELOP_NOT);
+            insertarNodoHijos(nodo, $1);
+            $$ = nodo;
           }
           ;
 
 relop_paren : LPAREN relop_expresion RPAREN 
             {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(RELOP_PAREN);
+                  insertarNodoHijos(nodo, $2);
+                  $$ = nodo;
             }
             | relop_expresion_simple
             {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(RELOP_PAREN);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
             }
             ;
 
 relop_expresion_simple : expresion relop expresion
                        {
-                        // ARBOL
+                        Nodo* nodo = crearNodo(RELOP_EXPRESION_SIMPLE);
+                        insertarNodoHijos(nodo, $1, $2, $3);
+                        $$ = nodo;
                        }
 
 expresion_lista : expresion 
                 {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(EXPRESION_LISTA);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
                 }
                 | expresion_lista COMMA expresion
                 {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(EXPRESION_LISTA);
+                  insertarNodoHijos(nodo, $1, $3);
+                  $$ = nodo;
                 }
                 ;
 
 expresion : termino
           {
-            // ARBOL
+            Nodo* nodo = crearNodo(EXPRESION);
+            insertarNodoHijos(nodo, $1);
+            $$ = nodo;
           }
           | expresion addop termino
           {
-            // ARBOL
+            Nodo* nodo = crearNodo(EXPRESION);
+            insertarNodoHijos(nodo, $1, $2, $3);
+            $$ = nodo;
           }
           ;
 
 termino : factor
         {
-            // ARBOL
+            Nodo* nodo = crearNodo(TERMINO);
+            insertarNodoHijos(nodo, $1);
+            $$ = nodo;
         }
         | termino mulop factor
         {
-            // ARBOL
+            Nodo* nodo = crearNodo(TERMINO);
+            insertarNodoHijos(nodo, $1, $2, $3);
+            $$ = nodo;
         }
         ;
 
 llamado_funcion : identificador LPAREN expresion_lista RPAREN
                 {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(LLAMADO_FUNCION);
+                  insertarNodoHijos(nodo, $1, $3);
+                  $$ = nodo;
                 }
                 ; 
 
 factor : identificador
        {
-            // ARBOL
+            Nodo* nodo = crearNodo(FACTOR);
+            insertarNodoHijos(nodo, $1);
+            $$ = nodo;
        }
        | identificador LBRACKET expresion RBRACKET
        {
-            // ARBOL
+            Nodo* nodo = crearNodo(FACTOR);
+            insertarNodoHijos(nodo, $1, $3);
+            $$ = nodo;
        }
        | llamado_funcion
        {
-            // ARBOL
+            Nodo* nodo = crearNodo(FACTOR);
+            insertarNodoHijos(nodo, $1);
+            $$ = nodo;
        }
        | constante_entera
        {
-            // ARBOL
+            Nodo* nodo = crearNodo(FACTOR);
+            insertarNodoHijos(nodo, $1);
+            $$ = nodo;
        }
        | constante_real
        {
-            // ARBOL
+            Nodo* nodo = crearNodo(FACTOR);
+            insertarNodoHijos(nodo, $1);
+            $$ = nodo;
        }
        | signo factor
        {
-            // ARBOL
+            Nodo* nodo = crearNodo(FACTOR);
+            insertarNodoHijos(nodo, $1, $2);
+            $$ = nodo;
        }
        | LPAREN expresion RPAREN
        {
-            // ARBOL
+            Nodo* nodo = crearNodo(FACTOR);
+            insertarNodoHijos(nodo, $2);
+            $$ = nodo;
        }
        ;
 
 signo : PLUS
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(SIGNO);
+            nodo->valorCadena = strdup("+");
+            $$ = nodo;
       }
       | MINUS
       {
-            // ARBOL
+            Nodo* nodo = crearNodo(SIGNO);
+            nodo->valorCadena = strdup("-");
+            $$ = nodo;
       }
       | /* empty */
       {
-            // ARBOL
+            $$ = NULL;
       }
       ;
 
 constante_entera : signo NUM_ENTERO
                  {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(CONSTANTE_ENTERA);
+                  nodo->valorCadena = strdup($2);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
                  }
                  ;
 
 constante_real : signo NUM_ENTERO PERIOD NUM_ENTERO
                {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(CONSTANTE_REAL);
+                  nodo->valorCadena = strdup($2);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
                }
                | signo EXP
                {
-                  // ARBOL
+                  Nodo* nodo = crearNodo(CONSTANTE_REAL);
+                  nodo->valorCadena = strdup($2);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
                }
                ;
 
@@ -721,7 +940,7 @@ void insert_table_var_def(Var_Types type, variable_line identifier) {
       ht_search(ht, identifier.name, index, collision_list_position);
       if (index != -1 && ht_is_scope_already_declared(ht, identifier.name, index, scope)) {
             printf("Error: variable %s ya declarada en linea %d\n", identifier.name, identifier.line_used);
-            std::string errorS = "Error";
+            std::string errorS = "Error, variable redefinida";
             char* errorC = new char[errorS.length() + 1];
             strcpy(errorC, errorS.c_str());
             yyerror(errorC);
@@ -737,14 +956,14 @@ void insert_table_var_used(Var_Types type, variable_line identifier) {
       ht_search(ht, identifier.name, index, collision_list_position);
       if (index == -1) {
             printf("Error: variable %s no declarada en linea %d\n", identifier.name, identifier.line_used);
-            std::string errorS = "Error";
+            std::string errorS = "Error, variable no definida";
             char* errorC = new char[errorS.length() + 1];
             strcpy(errorC, errorS.c_str());
             yyerror(errorC);;
       }
       else if (!ht_is_scope_less_than_defined(ht, identifier.name, index, current_scope)) {
             printf("Error: variable %s en scope diferente en linea %d\n", identifier.name, identifier.line_used);
-            std::string errorS = "Error";
+            std::string errorS = "Error, variable no declarada en scope";
             char* errorC = new char[errorS.length() + 1];
             strcpy(errorC, errorS.c_str());
             yyerror(errorC);
@@ -794,7 +1013,10 @@ void insert_table(Var_Types type, variable_line identifier) {
                   bytesize = 0;
                   break;
       }
-      data_value datos = {mem_acum, type, bytesize, lugar, "", current_scope};
+      std::string vacio = "";
+      char* vacioC = new char[vacio.length() + 1];
+      strcpy(vacioC, vacio.c_str());
+      data_value datos = {mem_acum, type, bytesize, lugar, vacioC, current_scope};
       ht_insert(ht, nombre, datos);
       mem_acum += bytesize;
 }
@@ -845,9 +1067,9 @@ int main( int argc, char* argv[] )
 
       yyparse();
 
-      printf("Ya acabe king\n");
+      printf("Arbol creado exitosamente\n");
 
-      //print_table(ht);
+      // print_table(ht);
 
       return 0;
 }
