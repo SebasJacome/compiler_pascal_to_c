@@ -82,7 +82,7 @@ DELIMITADOR [\t\r\f ]
 }
 
 \(\*([^*]|\*+[^)*])*\*\) {
-    printf("Comentario: %s\n", yytext);
+    // printf("Comentario: %s\n", yytext);
 };
 
 \"[^\"]*\" {

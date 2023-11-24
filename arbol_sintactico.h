@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include <string>
@@ -7,71 +8,94 @@
 #define MAX_HIJOS_NODO 3
 
 enum tipoNodo {
-    SIN_TIPO, PROGRAMA, CONTENIDO_PROGRAMA, IDENTIFICADOR_LISTA, DECLARACIONES_VARIABLES, 
-    DECLARACIONES_CONSTANTES, TIPO, SUBPROGRAMA_DECLARACIONES, SUBPROGRAMA_DECLARACION, SUBPROGRAMA_ENCABEZADO, ARGUMENTOS, 
-    PARAMETROS, PARAMETROS_LISTA, INSTRUCCIONES_LISTA, NUMERO,
+    SIN_TIPO, PROGRAMA, CONTENIDO_PROGRAMA, DECLARACIONES_VARIABLES, INSTRUCCION_COMPUESTA, DECLARACIONES_CONSTANTES,
+    SUBPROGRAMA_DECLARACION, SUBPROGRAMA_ENCABEZADO, PARAMETROS, PARAMETROS_LISTA, NUMERO, INSTRUCCIONES,
     REPETICION_INSTRUCCION, LECTURA_INSTRUCCION, ESCRITURA_INSTRUCCION, IF_INSTRUCCION, VARIABLE_ASIGNACION, 
-    VARIABLE, PROCEDURE_INSTRUCCION, RELOP_EXPRESION, RELOP_AND, CADENA_CONST,
-    RELOP_EXPRESION_SIMPLE, EXPRESION_LISTA, EXPRESION, TERMINO, LLAMADO_FUNCION, 
-    FACTOR, CONSTANTE_ENTERA, CONSTANTE_REAL, ID, RELOP, ADDOP, 
-    MULOP, ESTANDAR_TIPO, FOR_COMPORTAMIENTO, SIGNO
+    VARIABLE, PROCEDURE_INSTRUCCION, CADENA_CONST, RELOP_EXPRESION_SIMPLE, LLAMADO_FUNCION, FACTOR, 
+    CONSTANTE_ENTERA, CONSTANTE_REAL, ID, RELOP, ADDOP, MULOP, ESTANDAR_TIPO, SIGNO
 };
+
+// IDENTIFICADOR_LISTA, DECLARACIONES, CONSTANTES, TIPO, SUBPROGRAMA_DECLARACIONES, ARGUMENTOS, INSTRUCCIONES_OPCIONALES
+// INSTRUCCIONES_LISTA, INSTRUCCION_ELSE, FOR_ASIGNACION, RELOP_EXPRESION, RELOP_NOT, RELOP_PAREN, EXPRESION_LISTA
+// HOLA GARRITA, CÓMO ESTÁS. MIRA VENGO A EXPLICARTE TODOS LOS NUEVOS SENSORES
 
 std::string tipoTexto(tipoNodo tipo);
 
 typedef struct Nodo Nodo;
 
-struct Nodo {
-    tipoNodo tipo;
-    // Nodo* hermano;
-    std::vector<Nodo*> hijos;
+struct Nodo{
+    std::string tipo;
     std::string valorCadena;
-
-    Nodo(tipoNodo t) : tipo(t), hijos(MAX_HIJOS_NODO, nullptr) {}
-
-    ~Nodo() {
-        for (auto hijo : hijos) {
-            delete hijo;
-        }
-    }
+    Nodo* hermano;
+    std::vector<Nodo*> hijos;
 };
 
-Nodo* crearNodo(tipoNodo tipo) {
-    return new Nodo(tipo);
+Nodo* crearNodo(tipoNodo tipo){
+    size_t tamNodo = sizeof(Nodo);
+    Nodo* nodo = new Nodo;
+    nodo->tipo = tipoTexto(tipo);
+    nodo->valorCadena = "";
+    nodo->hermano = nullptr;
+    return nodo;
 }
 
-void insertarNodoHijos(Nodo* nodo, Nodo* nodoHijo1 = NULL, Nodo* nodoHijo2 = NULL, Nodo* nodoHijo3 = NULL) {
-    if (nodoHijo1) nodo->hijos[0] = nodoHijo1;
-    if (nodoHijo2) nodo->hijos[1] = nodoHijo2;
-    if (nodoHijo3) nodo->hijos[2] = nodoHijo3;   
+void agregarHijo(Nodo* nodo, Nodo* hijo){
+    if(nodo != nullptr){
+        nodo->hijos.push_back(hijo);
+    }
 }
 
-void eliminarArbol(Nodo* nodo) {
-    delete nodo;
+void insertarNodoHijos(Nodo* nodo, Nodo* nodo1 = nullptr, Nodo* nodo2 = nullptr, Nodo* nodo3 = nullptr){
+    if (nodo1) agregarHijo(nodo, nodo1);
+    if (nodo2) agregarHijo(nodo, nodo2);
+    if (nodo3) agregarHijo(nodo, nodo3);
 }
 
-int contador = 0;
-std::string espacios = "";
+void agregarHermano(Nodo* nodo, Nodo* hermano){
+    if(nodo != nullptr){
+        nodo->hermano = hermano;
+    }
+}
 
-void imprimirArbol(Nodo* nodo){
-    Nodo* temp;
-    if(nodo){
-        temp = nodo;
-        printf("%s%s, ",espacios.c_str(), tipoTexto(temp->tipo).c_str());
-        if (temp->valorCadena != "") {
-            printf("Valor: %s", temp->valorCadena.c_str());
+void limpiarArbol(Nodo* raiz){
+    if(raiz != nullptr){
+        for(auto hijo: raiz->hijos){
+            limpiarArbol(hijo);
         }
-        printf("\n");
-        for(size_t i = 0; i < MAX_HIJOS_NODO; i++){
-            if(temp->hijos[i] != NULL){ 
-                espacios += " | ";
-                imprimirArbol(temp->hijos[i]);
-            }
+        Nodo* hermano = raiz->hermano;
+        if(hermano != nullptr){
+            raiz->hermano = nullptr;
+            limpiarArbol(hermano);
         }
     }
-    espacios = espacios.substr(0, espacios.length() - 3);
+    delete raiz;
 }
 
+std::string espacios = "";
+bool hermano = false;
+
+void imprimirArbol(Nodo* nodo) {
+    if(nodo == nullptr){
+        return;
+    }
+
+    if(hermano) std::cout << espacios << "H: " << nodo->valorCadena << " " << nodo->tipo << "\n";
+    else std::cout << espacios << nodo->valorCadena << " " << nodo->tipo << "\n";
+
+    
+    for(const auto&hijo : nodo->hijos){
+        espacios += " | ";
+        hermano = false;
+        imprimirArbol(hijo);
+        espacios = espacios.substr(0, espacios.size() - 3);
+    }
+
+    if(nodo->hermano != nullptr){
+        hermano = true;
+        imprimirArbol(nodo->hermano);
+        hermano = false;
+    }
+}
 
 
 std::string tipoTexto(tipoNodo tipo) {
@@ -82,28 +106,22 @@ std::string tipoTexto(tipoNodo tipo) {
             return "PROGRAMA";
         case CONTENIDO_PROGRAMA:
             return "CONTENIDO_PROGRAMA";
-        case IDENTIFICADOR_LISTA:
-            return "IDENTIFICADOR_LISTA";
         case DECLARACIONES_VARIABLES:
             return "DECLARACIONES_VARIABLES";
+        case INSTRUCCION_COMPUESTA:
+            return "INSTRUCCION_COMPUESTA";
         case DECLARACIONES_CONSTANTES:
             return "DECLARACIONES_CONSTANTES";
-        case TIPO:
-            return "TIPO";
-        case SUBPROGRAMA_DECLARACIONES:
-            return "SUBPROGRAMA_DECLARACIONES";
         case SUBPROGRAMA_DECLARACION:
             return "SUBPROGRAMA_DECLARACION";
         case SUBPROGRAMA_ENCABEZADO:
             return "SUBPROGRAMA_ENCABEZADO";
-        case ARGUMENTOS:
-            return "ARGUMENTOS";
         case PARAMETROS:
             return "PARAMETROS";
         case PARAMETROS_LISTA:
             return "PARAMETROS_LISTA";
-        case INSTRUCCIONES_LISTA:
-            return "INSTRUCCIONES_LISTA";
+        case INSTRUCCIONES:
+            return "INSTRUCCIONES";
         case REPETICION_INSTRUCCION:
             return "REPETICION_INSTRUCCION";
         case LECTURA_INSTRUCCION:
@@ -118,18 +136,8 @@ std::string tipoTexto(tipoNodo tipo) {
             return "VARIABLE";
         case PROCEDURE_INSTRUCCION:
             return "PROCEDURE_INSTRUCCION";
-        case RELOP_EXPRESION:
-            return "RELOP_EXPRESION";
-        case RELOP_AND:
-            return "RELOP_AND";
         case RELOP_EXPRESION_SIMPLE:
             return "RELOP_EXPRESION_SIMPLE";
-        case EXPRESION_LISTA:
-            return "EXPRESION_LISTA";
-        case EXPRESION:
-            return "EXPRESION";
-        case TERMINO:
-            return "TERMINO";
         case LLAMADO_FUNCION:
             return "LLAMADO_FUNCION";
         case FACTOR:
@@ -148,12 +156,12 @@ std::string tipoTexto(tipoNodo tipo) {
             return "MULOP";
         case ESTANDAR_TIPO:
             return "ESTANDAR_TIPO";
-        case FOR_COMPORTAMIENTO:
-            return "FOR_COMPORTAMIENTO";
         case SIGNO:
             return "SIGNO";
         case NUMERO:
             return "NUMERO";
+        case CADENA_CONST:
+            return "CADENA_CONST";
         default:
             return "ERROR: TIPO: " + std::to_string(tipo);
     }

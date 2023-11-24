@@ -3,9 +3,12 @@ Este programa calcula c = a+b y entonces d = c * a
 Tiene tres funciones
 *)
 program principal(input, output);
-
+    
     var a,b,c,d: INTEGER;
+    (* Esta a da error, porque se redeclara *)
+    var a: integer;
     var x : array[1..3] of real;
+    var y : string;
 
     (* Suma numeros *)
     function Add(a: integer; b: integer) : integer;
@@ -15,6 +18,7 @@ program principal(input, output);
 
     (* Resta numeros *)
     function Sus(a: integer; b: integer) : integer;
+    var SinUso: integer;
     begin
         Sus := a - b
     end;
@@ -43,20 +47,16 @@ program principal(input, output);
 begin
     a := 5;
     b := 3;
+    (* Esta variable suelta warning, nunca se definio *)
+    g := 8;
+    (* Esta variable tambien, porque se definio en un scope diferente *)
+    prueba := 1.9;
     multadd;
     while (a > b) do
       b := b + 1;
     for x := -3 to 5 do
       x := x - 1;
-    if a <> b then
-        begin
-            sub
-        end
-    else
-    begin
-        multadd;
-        sub
-    end;
     writeln(c);
     writeln("Resultado final: ", d)
+    (* Al final se imprimen warnings de variables sin usarse *)
 end.

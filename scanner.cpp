@@ -959,7 +959,7 @@ YY_RULE_SETUP
 case 52:
 YY_RULE_SETUP
 {
-    printf("Comentario: %s\n", yytext);
+    // printf("Comentario: %s\n", yytext);
 };
 	YY_BREAK
 case 53:

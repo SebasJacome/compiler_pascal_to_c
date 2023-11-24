@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 
 using namespace std;
 
@@ -203,6 +204,40 @@ void ht_insert_lines_used(HashTable& table, const char* key, unsigned long index
             }
         }
     }
+}
+
+bool ht_return_all_values_not_used(HashTable ht, std::string & vars_not_used) {
+    bool is_not_used = false;
+    std::string acum = "";
+    for (unsigned int i = 0; i < CAPACITY; i++)
+    {
+        if (ht.items[i] != NULL)
+        {
+            std::string str(ht.items[i]->value.source_lines_used);
+            if (str.length() < 1)
+            {
+                is_not_used = true;
+                acum += ht.items[i]->identifier_string;
+                acum +=  ", ";
+            }
+            for (unsigned int j = 0; j < ht.size_of_collision_list[i]; j++)
+            {
+                if (ht.collision_list[i][j] != NULL)
+                {
+                    std::string strcl = ht.collision_list[i][j]->value.source_lines_used;
+
+                    if (strcl.length() < 0)
+                    {
+                        is_not_used = true;
+                        acum += ht.collision_list[i][j]->identifier_string;
+                        acum +=  ", ";
+                    }
+                }
+            }
+        }
+    }
+    vars_not_used = acum;
+    return is_not_used;
 }
 
 void print_table(HashTable table)

@@ -1,11 +1,12 @@
 %{
       #include <stdio.h>
+      #include <iostream>
       #include <vector>
       #include <string>
       #include <string.h>
       #include <cstring>
       #include "hash_table.h"
-      #include "arbol_sintactico.h"
+      #include "codegen.h"
 	#pragma warning(disable: 4013 4244 4267 4996)
 	extern FILE * yyin;   
       extern int yylineno; 
@@ -34,6 +35,8 @@
       void insert_table_func_def(Var_Types type, variable_line identifier);
 
       typedef struct Nodo Nodo;
+
+      bool warning = false;
 %}
 
 %locations
@@ -57,8 +60,8 @@
       programa contenido_programa relop addop mulop identificador_lista identificador declaraciones
       declaraciones_variables declaraciones_constantes tipo estandar_tipo subprograma_declaraciones
       subprograma_declaracion subprograma_encabezado argumentos parametros_lista instruccion_compuesta
-      instrucciones_opcionales instrucciones_lista instrucciones repeticion_instruccion for_comportamiento
-      lectura_instruccion escritura_instruccion if_instruccion instruccion_else variable_asignacion
+      instrucciones_opcionales instrucciones_lista instrucciones repeticion_instruccion
+      lectura_instruccion escritura_instruccion if_instruccion variable_asignacion
       for_asignacion variable procedure_instruccion relop_expresion relop_and relop_not relop_paren
       relop_expresion_simple expresion_lista expresion termino llamado_funcion factor signo constante_entera
       constante_real cadena numero
@@ -72,12 +75,14 @@ programa : PROGRAM
             identificador 
             {
                   insert_table_var_def(VOID, last[last.size() - 1]);
+                  insert_table_var_used(VOID, {last[last.size() - 1].name, 0});
                   last.clear();
             }
             LPAREN identificador_lista
             {
                   for (unsigned int i = 0; i < last.size(); i++) {
                         insert_table_var_def(VOID, last[i]);
+                        insert_table_var_used(VOID, {last[i].name, 0});
                   }
                   last.clear();
             } 
@@ -85,13 +90,23 @@ programa : PROGRAM
             {
                   if (current_scope != 0) {
                         printf("Error, algun scope no se cerro correctamente");
+                        warning = true;
                   }
 
                   Nodo* raiz = crearNodo(PROGRAMA);
+                  
                   insertarNodoHijos(raiz, $3, $6, $10);
                   $$ = raiz; 
+
+                  string vars = "";
+                  if (ht_return_all_values_not_used(ht, vars)) {
+                        printf("Warning: variables definidas, pero nunca usadas: %s\n", vars.c_str());
+                        warning = 1;
+                  }
+
                   imprimirArbol(raiz);
-                  // imprimirArbolSoloIDs(raiz);
+
+                  generar(raiz, warning);
             }
             ;
 
@@ -220,9 +235,14 @@ identificador_lista : identificador
                     }
                     | identificador_lista COMMA identificador
                     {
-                        Nodo* nodo = crearNodo(IDENTIFICADOR_LISTA);
-                        insertarNodoHijos(nodo, $1, $3);
-                        $$ = nodo;
+                        Nodo* temp = $1;
+                        if(temp){
+                              while(temp->hermano != nullptr){
+                                    temp = temp->hermano;
+                              }
+                              agregarHermano(temp, $3);
+                              $$ = $1;
+                        }
                     }
                     ;
 
@@ -243,9 +263,18 @@ declaraciones_variables : declaraciones_variables VAR identificador_lista COLON 
                               }
                               last.clear();
 
-                              Nodo* nodo = crearNodo(DECLARACIONES_VARIABLES);
-                              insertarNodoHijos(nodo, $1, $3, $5);
-                              $$ = nodo;
+                              Nodo* temp = $1;
+                              if(temp){
+                                    agregarHijo(temp, $3);
+                                    agregarHijo($3, $5);
+                                    $$ = $1;
+                              }
+                              else{
+                                    Nodo* nodo = crearNodo(DECLARACIONES_VARIABLES);
+                                    insertarNodoHijos(nodo, $1, $3);
+                                    agregarHijo($3, $5);
+                                    $$ = nodo;
+                              }
                         }
                         | /* empty */
                         {
@@ -260,9 +289,18 @@ declaraciones_constantes : declaraciones_constantes CONST identificador EQUALS c
                               }
                               last.clear();
 
-                              Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
-                              insertarNodoHijos(nodo, $1, $3, $5);
-                              $$ = nodo;
+                              Nodo* temp = $1;
+                              if(temp){
+                                    agregarHijo(temp, $3);
+                                    agregarHijo($3, $5);
+                                    $$ = $1;
+                              }
+                              else{
+                                    Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                                    insertarNodoHijos(nodo, $1, $3);
+                                    agregarHijo($3, $5);
+                                    $$ = nodo;
+                              }
                          }
                          | declaraciones_constantes CONST identificador EQUALS constante_real SEMICOLON
                          {
@@ -271,9 +309,18 @@ declaraciones_constantes : declaraciones_constantes CONST identificador EQUALS c
                               }
                               last.clear();
 
-                              Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
-                              insertarNodoHijos(nodo, $1, $3, $5);
-                              $$ = nodo;
+                              Nodo* temp = $1;
+                              if(temp){
+                                    agregarHijo(temp, $3);
+                                    agregarHijo($3, $5);
+                                    $$ = $1;
+                              }
+                              else{
+                                    Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                                    insertarNodoHijos(nodo, $1, $3);
+                                    agregarHijo($3, $5);
+                                    $$ = nodo;
+                              }
                         }
                          | declaraciones_constantes CONST identificador EQUALS cadena SEMICOLON
                          {
@@ -282,9 +329,18 @@ declaraciones_constantes : declaraciones_constantes CONST identificador EQUALS c
                               }
                               last.clear();
 
-                              Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
-                              insertarNodoHijos(nodo, $1, $3, $5);
-                              $$ = nodo;
+                              Nodo* temp = $1;
+                              if(temp){
+                                    agregarHijo(temp, $3);
+                                    agregarHijo($3, $5);
+                                    $$ = $1;
+                              }
+                              else{
+                                    Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                                    insertarNodoHijos(nodo, $1, $3);
+                                    agregarHijo($3, $5);
+                                    $$ = nodo;
+                              }
                          }
                          | /* empty */
                          {
@@ -303,9 +359,8 @@ tipo : estandar_tipo
       }
       last.clear();
 
-      Nodo* nodo = crearNodo(TIPO);
+      Nodo* nodo = crearNodo(ESTANDAR_TIPO);
       nodo->valorCadena = strdup($1);
-      insertarNodoHijos(nodo, $9);
       $$ = nodo;
      }
      ;
@@ -346,9 +401,18 @@ estandar_tipo : INTEGER_TIPO
 
 subprograma_declaraciones : subprograma_declaraciones subprograma_declaracion SEMICOLON
                           {
-                              Nodo* nodo = crearNodo(SUBPROGRAMA_DECLARACIONES);
-                              insertarNodoHijos(nodo, $1, $2);
-                              $$ = nodo;
+                              Nodo* temp = $1;
+                              if(temp){
+                                    while(temp->hermano != nullptr){
+                                          temp = temp->hermano;
+                                    }
+                                    agregarHermano(temp, $2);
+                                    $$ = $1;
+                              } else {
+                                    Nodo* nodo = $2;
+                                    insertarNodoHijos(nodo, $1);
+                                    $$ = nodo;
+                              }
                           }
                           | /* empty */
                           {
@@ -415,7 +479,8 @@ parametros_lista : identificador_lista COLON tipo
                         last.pop_back();
                   }
                   Nodo* nodo = crearNodo(PARAMETROS_LISTA);
-                  insertarNodoHijos(nodo, $1, $3);
+                  insertarNodoHijos(nodo, $1);
+                  insertarNodoHijos($1, $3);
                   $$ = nodo;
                  }
                  | parametros_lista SEMICOLON identificador_lista COLON tipo
@@ -425,9 +490,15 @@ parametros_lista : identificador_lista COLON tipo
                         last.pop_back();
                   }
 
-                  Nodo* nodo = crearNodo(PARAMETROS_LISTA);
-                  insertarNodoHijos(nodo, $1, $3, $5);
-                  $$ = nodo;
+                  Nodo* temp = $1;
+                  if(temp){
+                        while(temp->hermano != nullptr){
+                              temp = temp->hermano;
+                        }
+                        agregarHijo(temp, $3);
+                        agregarHijo($3, $5);
+                        $$ = $1;
+                  }
                  }
                  ;
 
@@ -435,8 +506,9 @@ instruccion_compuesta : BEG instrucciones_opcionales
                         END
                         { 
                               current_scope = 0;
-
-                              $$ = $2;
+                              Nodo* nodo = crearNodo(INSTRUCCION_COMPUESTA);
+                              insertarNodoHijos(nodo, $2);
+                              $$ = nodo;
                         }
                         ;
 
@@ -456,39 +528,58 @@ instrucciones_lista : instrucciones
                     }
                     | instrucciones_lista SEMICOLON instrucciones
                     {
-                        Nodo* nodo = crearNodo(INSTRUCCIONES_LISTA);
-                        insertarNodoHijos(nodo, $1, $3);
-                        $$ = nodo;
+                        Nodo* temp = $1;
+                        if(temp){
+                              while(temp->hermano != nullptr){
+                                    temp = temp->hermano;
+                              }
+                              agregarHermano(temp, $3);
+                              $$ = $1;
+                        }
                     }
                     ;
 
 instrucciones : variable_asignacion
               {
-                  $$ = $1;
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | procedure_instruccion
               {
-                  $$ = $1;
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | instruccion_compuesta
               {
-                  $$ = $1;
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | if_instruccion
               {
-                  $$ = $1;
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | repeticion_instruccion
               {
-                  $$ = $1;
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | lectura_instruccion
               {
-                  $$ = $1;
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               | escritura_instruccion
               {
-                  $$ = $1;
+                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  insertarNodoHijos(nodo, $1);
+                  $$ = nodo;
               }
               ;
 
@@ -499,28 +590,21 @@ repeticion_instruccion : WHILE relop_expresion DO instrucciones
                         insertarNodoHijos(nodo, $2, $4);
                         $$ = nodo;
                        }
-                       | FOR for_asignacion for_comportamiento expresion DO instrucciones
+                       | FOR for_asignacion TO expresion DO instrucciones
                        {
                         Nodo* nodo = crearNodo(REPETICION_INSTRUCCION);
-                        nodo->valorCadena = strdup("for");
-                        insertarNodoHijos(nodo, $2, $4);
+                        nodo->valorCadena = strdup("for++");
+                        insertarNodoHijos(nodo, $2, $4, $6);
+                        $$ = nodo;
+                       }
+                       | FOR for_asignacion DOWNTO expresion DO instrucciones
+                       {
+                        Nodo* nodo = crearNodo(REPETICION_INSTRUCCION);
+                        nodo->valorCadena = strdup("for--");
+                        insertarNodoHijos(nodo, $2, $4, $6);
                         $$ = nodo;
                        }
                        ;
-
-for_comportamiento: TO 
-                  {
-                        Nodo* nodo = crearNodo(FOR_COMPORTAMIENTO);
-                        nodo->valorCadena = strdup($1);
-                        $$ = nodo;
-                  }
-                  | DOWNTO   
-                  {
-                        Nodo* nodo = crearNodo(FOR_COMPORTAMIENTO);
-                        nodo->valorCadena = strdup($1);
-                        $$ = nodo;
-                  }
-                  ;
 
 lectura_instruccion : READ LPAREN identificador RPAREN
                     {
@@ -614,24 +698,21 @@ escritura_instruccion : WRITE LPAREN cadena COMMA identificador RPAREN
                        }
                       ;
 
-if_instruccion : IF relop_expresion THEN instrucciones instruccion_else
+if_instruccion : IF relop_expresion THEN instrucciones ELSE instrucciones
                {
                   Nodo* nodo = crearNodo(IF_INSTRUCCION);
                   nodo->valorCadena = strdup("if");
-                  insertarNodoHijos(nodo, $2, $4, $5);
+                  insertarNodoHijos(nodo, $2, $4, $6);
+                  $$ = nodo;
+               }
+               | IF relop_expresion THEN instrucciones
+               {
+                  Nodo* nodo = crearNodo(IF_INSTRUCCION);
+                  nodo->valorCadena = strdup("if");
+                  insertarNodoHijos(nodo, $2, $4);
                   $$ = nodo;
                }
                ;
-
-instruccion_else: ELSE instrucciones
-                  {
-                        $$ = $2;
-                  }
-                  | /* empty */
-                  {
-                        $$ = NULL;
-                  }
-                  ;
 
 variable_asignacion : variable COLON EQUALS expresion
                     {
@@ -670,7 +751,9 @@ variable : identificador
 
 procedure_instruccion : identificador 
                       {
-                        $$ = $1;
+                        Nodo* nodo = crearNodo(PROCEDURE_INSTRUCCION);
+                        insertarNodoHijos(nodo, $1);
+                        $$ = nodo;
                       }
                       | identificador LPAREN expresion_lista RPAREN
                       {
@@ -681,9 +764,14 @@ procedure_instruccion : identificador
 
 relop_expresion : relop_expresion OR relop_and 
                 {
-                  Nodo* nodo = crearNodo(RELOP_EXPRESION);
-                  insertarNodoHijos(nodo, $1, $3);
-                  $$ = nodo;
+                  Nodo* temp = $1;
+                  if(temp){
+                        while(temp->hermano != nullptr){
+                              temp = temp->hermano;
+                        }
+                        agregarHermano(temp, $3);
+                        $$ = $1;
+                  }
                 }
                 | relop_and
                 {
@@ -693,9 +781,14 @@ relop_expresion : relop_expresion OR relop_and
 
 relop_and : relop_and AND relop_not 
           {
-            Nodo* nodo = crearNodo(RELOP_AND);
-            insertarNodoHijos(nodo, $1, $3);
-            $$ = nodo;
+            Nodo* temp = $1;
+            if(temp){
+                  while(temp->hermano != nullptr){
+                        temp = temp->hermano;
+                  }
+                  agregarHermano(temp, $3);
+                  $$ = $1;
+            }
           }
           | relop_not
           {
@@ -736,9 +829,14 @@ expresion_lista : expresion
                 }
                 | expresion_lista COMMA expresion
                 {
-                  Nodo* nodo = crearNodo(EXPRESION_LISTA);
-                  insertarNodoHijos(nodo, $1, $3);
-                  $$ = nodo;
+                  Nodo* temp = $1;
+                        if(temp){
+                              while(temp->hermano != nullptr){
+                                    temp = temp->hermano;
+                              }
+                              agregarHermano(temp, $3);
+                              $$ = $1;
+                        }
                 }
                 ;
 
@@ -748,9 +846,10 @@ expresion : termino
           }
           | expresion addop termino
           {
-            Nodo* nodo = crearNodo(EXPRESION);
-            insertarNodoHijos(nodo, $1, $2, $3);
-            $$ = nodo;
+            Nodo* temp = $1;
+            agregarHijo(temp, $2);
+            agregarHijo($2, $3);
+            $$ = $1;
           }
           ;
 
@@ -760,9 +859,11 @@ termino : factor
         }
         | termino mulop factor
         {
-            Nodo* nodo = crearNodo(TERMINO);
-            insertarNodoHijos(nodo, $1, $2, $3);
-            $$ = nodo;
+            Nodo* temp = $1;
+            agregarHijo(temp, $2);
+            agregarHijo($2, $3);
+            $$ = $1;
+
         }
         ;
 
@@ -873,6 +974,7 @@ void insert_table_var_def(Var_Types type, variable_line identifier) {
       ht_search(ht, identifier.name, index, collision_list_position);
       if (index != -1 && ht_is_scope_already_declared(ht, identifier.name, index, scope)) {
             printf("Warning: variable %s ya declarada en linea %d\n", identifier.name, identifier.line_used);
+            warning = true;
       }
       else {
             insert_table(type, identifier);
@@ -884,10 +986,12 @@ void insert_table_var_used(Var_Types type, variable_line identifier) {
       long collision_list_position;
       ht_search(ht, identifier.name, index, collision_list_position);
       if (index == -1) {
-            printf("Warning: variable %s no declarada en linea %d\n", identifier.name, identifier.line_used);;
+            printf("Warning: variable %s no declarada en linea %d\n", identifier.name, identifier.line_used);
+            warning = true;
       }
       else if (!ht_is_scope_less_than_defined(ht, identifier.name, index, current_scope)) {
             printf("Warning: variable %s en scope diferente en linea %d\n", identifier.name, identifier.line_used);
+            warning = true;
       }
       else {
             ht_insert_lines_used(ht, identifier.name, index, identifier.line_used, current_scope);
@@ -987,8 +1091,6 @@ int main( int argc, char* argv[] )
       create_table(ht);
       //yydebug = 1;
       yyparse();
-
-      printf("Arbol creado exitosamente\n");
 
       // print_table(ht);
 
