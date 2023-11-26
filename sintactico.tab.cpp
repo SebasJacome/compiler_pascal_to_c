@@ -1703,7 +1703,7 @@ yyreduce:
                         warning = true;
                   }
 
-                  Nodo* raiz = crearNodo(PROGRAMA);
+                  Nodo* raiz = crearNodo("PROGRAMA");
                   
                   insertarNodoHijos(raiz, (yyvsp[(3) - (11)].nodo), (yyvsp[(6) - (11)].nodo), (yyvsp[(10) - (11)].nodo));
                   (yyval.nodo) = raiz; 
@@ -1727,7 +1727,7 @@ yyreduce:
   case 6:
 
     {
-                        Nodo* nodo = crearNodo(CONTENIDO_PROGRAMA);
+                        Nodo* nodo = crearNodo("CONTENIDO_PROGRAMA");
                         insertarNodoHijos(nodo, (yyvsp[(1) - (3)].nodo), (yyvsp[(2) - (3)].nodo), (yyvsp[(3) - (3)].nodo));
                         (yyval.nodo) = nodo;
                    ;}
@@ -1740,7 +1740,7 @@ yyreduce:
                         int var_line = (yylsp[(1) - (1)]).last_line;
                         last.push_back({var_name, var_line}); 
 
-                        Nodo* nodo = crearNodo(ID);
+                        Nodo* nodo = crearNodo("ID");
                         nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
                         (yyval.nodo) = nodo;
                             
@@ -1750,7 +1750,7 @@ yyreduce:
   case 8:
 
     {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup("&&");
             (yyval.nodo) = nodo;
       ;}
@@ -1759,7 +1759,7 @@ yyreduce:
   case 9:
 
     {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup("||");
             (yyval.nodo) = nodo;
       ;}
@@ -1768,7 +1768,7 @@ yyreduce:
   case 10:
 
     {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup("==");
             (yyval.nodo) = nodo;
       ;}
@@ -1777,7 +1777,7 @@ yyreduce:
   case 11:
 
     {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -1786,7 +1786,7 @@ yyreduce:
   case 12:
 
     {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -1795,7 +1795,7 @@ yyreduce:
   case 13:
 
     {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -1804,7 +1804,7 @@ yyreduce:
   case 14:
 
     {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -1813,7 +1813,7 @@ yyreduce:
   case 15:
 
     {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup("!=");
             (yyval.nodo) = nodo;
       ;}
@@ -1822,7 +1822,7 @@ yyreduce:
   case 16:
 
     {
-            Nodo* nodo = crearNodo(ADDOP);
+            Nodo* nodo = crearNodo("ADDOP");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -1831,7 +1831,7 @@ yyreduce:
   case 17:
 
     {
-            Nodo* nodo = crearNodo(ADDOP);
+            Nodo* nodo = crearNodo("ADDOP");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -1840,7 +1840,7 @@ yyreduce:
   case 18:
 
     {
-            Nodo* nodo = crearNodo(MULOP);
+            Nodo* nodo = crearNodo("MULOP");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -1849,7 +1849,7 @@ yyreduce:
   case 19:
 
     {
-            Nodo* nodo = crearNodo(MULOP);
+            Nodo* nodo = crearNodo("MULOP");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -1858,7 +1858,7 @@ yyreduce:
   case 20:
 
     {
-            Nodo* nodo = crearNodo(MULOP);
+            Nodo* nodo = crearNodo("MULOP");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -1867,7 +1867,7 @@ yyreduce:
   case 21:
 
     {
-            Nodo* nodo = crearNodo(MULOP);
+            Nodo* nodo = crearNodo("MULOP");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -1876,7 +1876,7 @@ yyreduce:
   case 22:
 
     {
-            Nodo* nodo = crearNodo(CADENA_CONST);
+            Nodo* nodo = crearNodo("CADENA_CONST");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -1932,7 +1932,7 @@ yyreduce:
                                     (yyval.nodo) = (yyvsp[(1) - (6)].nodo);
                               }
                               else{
-                                    Nodo* nodo = crearNodo(DECLARACIONES_VARIABLES);
+                                    Nodo* nodo = crearNodo("DECLARACIONES_VARIABLES");
                                     insertarNodoHijos(nodo, (yyvsp[(1) - (6)].nodo), (yyvsp[(3) - (6)].nodo));
                                     agregarHijo((yyvsp[(3) - (6)].nodo), (yyvsp[(5) - (6)].nodo));
                                     (yyval.nodo) = nodo;
@@ -1962,7 +1962,7 @@ yyreduce:
                                     (yyval.nodo) = (yyvsp[(1) - (6)].nodo);
                               }
                               else{
-                                    Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                                    Nodo* nodo = crearNodo("DECLARACIONES_CONSTANTES");
                                     insertarNodoHijos(nodo, (yyvsp[(1) - (6)].nodo), (yyvsp[(3) - (6)].nodo));
                                     agregarHijo((yyvsp[(3) - (6)].nodo), (yyvsp[(5) - (6)].nodo));
                                     (yyval.nodo) = nodo;
@@ -1985,7 +1985,7 @@ yyreduce:
                                     (yyval.nodo) = (yyvsp[(1) - (6)].nodo);
                               }
                               else{
-                                    Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                                    Nodo* nodo = crearNodo("DECLARACIONES_CONSTANTES");
                                     insertarNodoHijos(nodo, (yyvsp[(1) - (6)].nodo), (yyvsp[(3) - (6)].nodo));
                                     agregarHijo((yyvsp[(3) - (6)].nodo), (yyvsp[(5) - (6)].nodo));
                                     (yyval.nodo) = nodo;
@@ -2008,7 +2008,7 @@ yyreduce:
                                     (yyval.nodo) = (yyvsp[(1) - (6)].nodo);
                               }
                               else{
-                                    Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                                    Nodo* nodo = crearNodo("DECLARACIONES_CONSTANTES");
                                     insertarNodoHijos(nodo, (yyvsp[(1) - (6)].nodo), (yyvsp[(3) - (6)].nodo));
                                     agregarHijo((yyvsp[(3) - (6)].nodo), (yyvsp[(5) - (6)].nodo));
                                     (yyval.nodo) = nodo;
@@ -2038,11 +2038,11 @@ yyreduce:
       }
       last.clear();
 
-      Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+      Nodo* nodo = crearNodo("ESTANDAR_TIPO");
       nodo->valorCadena = strdup((yyvsp[(1) - (9)].cadena));
-      Nodo* hijo1 = crearNodo(ESTANDAR_TIPO);
+      Nodo* hijo1 = crearNodo("ESTANDAR_TIPO");
       hijo1->valorCadena = strdup((yyvsp[(3) - (9)].cadena));
-      Nodo* hijo2 = crearNodo(ESTANDAR_TIPO);
+      Nodo* hijo2 = crearNodo("ESTANDAR_TIPO");
       hijo2->valorCadena = strdup((yyvsp[(6) - (9)].cadena));
       insertarNodoHijos(nodo, hijo1, hijo2, (yyvsp[(9) - (9)].nodo));
       (yyval.nodo) = nodo;
@@ -2054,7 +2054,7 @@ yyreduce:
     { 
                   last_variable_type = INTEGER;
 
-                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  Nodo* nodo = crearNodo("ESTANDAR_TIPO");
                   nodo->valorCadena = strdup("int");
                   (yyval.nodo) = nodo;
               ;}
@@ -2065,7 +2065,7 @@ yyreduce:
     { 
                   last_variable_type = FLOAT;
 
-                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  Nodo* nodo = crearNodo("ESTANDAR_TIPO");
                   nodo->valorCadena = strdup("float");
                   (yyval.nodo) = nodo;
               ;}
@@ -2076,7 +2076,7 @@ yyreduce:
     { 
                   last_variable_type = STRING;
 
-                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  Nodo* nodo = crearNodo("ESTANDAR_TIPO");
                   nodo->valorCadena = strdup("string");
                   (yyval.nodo) = nodo;
               ;}
@@ -2087,7 +2087,7 @@ yyreduce:
     { 
                   last_variable_type = BOOLEAN;
 
-                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  Nodo* nodo = crearNodo("ESTANDAR_TIPO");
                   nodo->valorCadena = strdup("bool");
                   (yyval.nodo) = nodo;
               ;}
@@ -2121,7 +2121,7 @@ yyreduce:
   case 41:
 
     {
-                              Nodo* nodo = crearNodo(SUBPROGRAMA_DECLARACION);
+                              Nodo* nodo = crearNodo("SUBPROGRAMA_DECLARACION");
                               insertarNodoHijos(nodo, (yyvsp[(1) - (3)].nodo), (yyvsp[(2) - (3)].nodo), (yyvsp[(3) - (3)].nodo));
                               (yyval.nodo) = nodo;
                         ;}
@@ -2146,7 +2146,7 @@ yyreduce:
   case 44:
 
     {
-                              Nodo* nodo = crearNodo(SUBPROGRAMA_ENCABEZADO);
+                              Nodo* nodo = crearNodo("SUBPROGRAMA_ENCABEZADO");
                               nodo->valorCadena = strdup("function");
                               insertarNodoHijos(nodo, (yyvsp[(3) - (8)].nodo), (yyvsp[(4) - (8)].nodo), (yyvsp[(6) - (8)].nodo));
                               (yyval.nodo) = nodo;
@@ -2167,7 +2167,7 @@ yyreduce:
                               insert_table_func_def(VOID, last[0]);
                               last.clear();
 
-                              Nodo* nodo = crearNodo(SUBPROGRAMA_ENCABEZADO);
+                              Nodo* nodo = crearNodo("SUBPROGRAMA_ENCABEZADO");
                               nodo->valorCadena = strdup("procedure");
                               insertarNodoHijos(nodo, (yyvsp[(3) - (5)].nodo), (yyvsp[(4) - (5)].nodo));
                               (yyval.nodo) = nodo;
@@ -2195,7 +2195,7 @@ yyreduce:
                         insert_table_var_def(last_variable_type, last[last.size() - 1]);
                         last.pop_back();
                   }
-                  Nodo* nodo = crearNodo(PARAMETROS_LISTA);
+                  Nodo* nodo = crearNodo("PARAMETROS_LISTA");
                   insertarNodoHijos(nodo, (yyvsp[(1) - (3)].nodo));
                   insertarNodoHijos((yyvsp[(1) - (3)].nodo), (yyvsp[(3) - (3)].nodo));
                   (yyval.nodo) = nodo;
@@ -2226,7 +2226,7 @@ yyreduce:
 
     { 
                               current_scope = 0;
-                              Nodo* nodo = crearNodo(INSTRUCCION_COMPUESTA);
+                              Nodo* nodo = crearNodo("INSTRUCCION_COMPUESTA");
                               insertarNodoHijos(nodo, (yyvsp[(2) - (3)].nodo));
                               (yyval.nodo) = nodo;
                         ;}
@@ -2270,7 +2270,7 @@ yyreduce:
   case 56:
 
     {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, (yyvsp[(1) - (1)].nodo));
                   (yyval.nodo) = nodo;
               ;}
@@ -2279,7 +2279,7 @@ yyreduce:
   case 57:
 
     {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, (yyvsp[(1) - (1)].nodo));
                   (yyval.nodo) = nodo;
               ;}
@@ -2288,7 +2288,7 @@ yyreduce:
   case 58:
 
     {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, (yyvsp[(1) - (1)].nodo));
                   (yyval.nodo) = nodo;
               ;}
@@ -2297,7 +2297,7 @@ yyreduce:
   case 59:
 
     {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, (yyvsp[(1) - (1)].nodo));
                   (yyval.nodo) = nodo;
               ;}
@@ -2306,7 +2306,7 @@ yyreduce:
   case 60:
 
     {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, (yyvsp[(1) - (1)].nodo));
                   (yyval.nodo) = nodo;
               ;}
@@ -2315,7 +2315,7 @@ yyreduce:
   case 61:
 
     {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, (yyvsp[(1) - (1)].nodo));
                   (yyval.nodo) = nodo;
               ;}
@@ -2324,7 +2324,7 @@ yyreduce:
   case 62:
 
     {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, (yyvsp[(1) - (1)].nodo));
                   (yyval.nodo) = nodo;
               ;}
@@ -2333,7 +2333,7 @@ yyreduce:
   case 63:
 
     {
-                        Nodo* nodo = crearNodo(REPETICION_INSTRUCCION);
+                        Nodo* nodo = crearNodo("REPETICION_INSTRUCCION");
                         nodo->valorCadena = strdup("while");
                         insertarNodoHijos(nodo, (yyvsp[(2) - (4)].nodo), (yyvsp[(4) - (4)].nodo));
                         (yyval.nodo) = nodo;
@@ -2343,7 +2343,7 @@ yyreduce:
   case 64:
 
     {
-                        Nodo* nodo = crearNodo(REPETICION_INSTRUCCION);
+                        Nodo* nodo = crearNodo("REPETICION_INSTRUCCION");
                         nodo->valorCadena = strdup("for++");
                         insertarNodoHijos(nodo, (yyvsp[(2) - (6)].nodo), (yyvsp[(4) - (6)].nodo), (yyvsp[(6) - (6)].nodo));
                         (yyval.nodo) = nodo;
@@ -2353,7 +2353,7 @@ yyreduce:
   case 65:
 
     {
-                        Nodo* nodo = crearNodo(REPETICION_INSTRUCCION);
+                        Nodo* nodo = crearNodo("REPETICION_INSTRUCCION");
                         nodo->valorCadena = strdup("for--");
                         insertarNodoHijos(nodo, (yyvsp[(2) - (6)].nodo), (yyvsp[(4) - (6)].nodo), (yyvsp[(6) - (6)].nodo));
                         (yyval.nodo) = nodo;
@@ -2363,7 +2363,7 @@ yyreduce:
   case 66:
 
     {
-                        Nodo* nodo = crearNodo(LECTURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("LECTURA_INSTRUCCION");
                         nodo->valorCadena = strdup("read");
                         agregarHijo(nodo, (yyvsp[(3) - (4)].nodo));
                         (yyval.nodo) = nodo;
@@ -2373,7 +2373,7 @@ yyreduce:
   case 67:
 
     {
-                        Nodo* nodo = crearNodo(LECTURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("LECTURA_INSTRUCCION");
                         nodo->valorCadena = strdup("readln");
                         agregarHijo(nodo, (yyvsp[(3) - (4)].nodo));
                         (yyval.nodo) = nodo;
@@ -2387,7 +2387,7 @@ yyreduce:
                         insert_table_var_used(last_variable_type, last[0]);
                         last.clear();
 
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("write");
                         insertarNodoHijos(nodo, (yyvsp[(3) - (6)].nodo), (yyvsp[(5) - (6)].nodo));
                         (yyval.nodo) = nodo;
@@ -2401,7 +2401,7 @@ yyreduce:
                         insert_table_var_used(last_variable_type, last[0]);
                         last.clear();
 
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("writeln");
                         insertarNodoHijos(nodo, (yyvsp[(3) - (6)].nodo), (yyvsp[(5) - (6)].nodo));
                         (yyval.nodo) = nodo;
@@ -2411,7 +2411,7 @@ yyreduce:
   case 70:
 
     {
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("write");
                         insertarNodoHijos(nodo, (yyvsp[(3) - (4)].nodo));
                         (yyval.nodo) = nodo;
@@ -2421,7 +2421,7 @@ yyreduce:
   case 71:
 
     {
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("writeln");
                         insertarNodoHijos(nodo, (yyvsp[(3) - (4)].nodo));
                         (yyval.nodo) = nodo;
@@ -2431,7 +2431,7 @@ yyreduce:
   case 72:
 
     {
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("write");
                         insertarNodoHijos(nodo, (yyvsp[(3) - (6)].nodo), (yyvsp[(5) - (6)].nodo));
                         (yyval.nodo) = nodo;
@@ -2441,7 +2441,7 @@ yyreduce:
   case 73:
 
     {
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("writeln");
                         insertarNodoHijos(nodo, (yyvsp[(3) - (6)].nodo), (yyvsp[(5) - (6)].nodo));
                         (yyval.nodo) = nodo;
@@ -2455,7 +2455,7 @@ yyreduce:
                         insert_table_var_used(last_variable_type, last[0]);
                         last.clear();
 
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("write");
                         insertarNodoHijos(nodo, (yyvsp[(3) - (4)].nodo));
                         (yyval.nodo) = nodo;
@@ -2469,7 +2469,7 @@ yyreduce:
                         insert_table_var_used(last_variable_type, last[0]);
                         last.clear();
 
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("writeln");
                         insertarNodoHijos(nodo, (yyvsp[(3) - (4)].nodo));
                         (yyval.nodo) = nodo;
@@ -2479,7 +2479,7 @@ yyreduce:
   case 76:
 
     {
-                  Nodo* nodo = crearNodo(IF_INSTRUCCION);
+                  Nodo* nodo = crearNodo("IF_INSTRUCCION");
                   nodo->valorCadena = strdup("if");
                   insertarNodoHijos(nodo, (yyvsp[(2) - (6)].nodo), (yyvsp[(4) - (6)].nodo), (yyvsp[(6) - (6)].nodo));
                   (yyval.nodo) = nodo;
@@ -2489,7 +2489,7 @@ yyreduce:
   case 77:
 
     {
-                  Nodo* nodo = crearNodo(IF_INSTRUCCION);
+                  Nodo* nodo = crearNodo("IF_INSTRUCCION");
                   nodo->valorCadena = strdup("if");
                   insertarNodoHijos(nodo, (yyvsp[(2) - (4)].nodo), (yyvsp[(4) - (4)].nodo));
                   (yyval.nodo) = nodo;
@@ -2504,7 +2504,7 @@ yyreduce:
                         }
                         last.clear();
 
-                        Nodo* nodo = crearNodo(VARIABLE_ASIGNACION);
+                        Nodo* nodo = crearNodo("VARIABLE_ASIGNACION");
                         insertarNodoHijos(nodo, (yyvsp[(1) - (4)].nodo), (yyvsp[(4) - (4)].nodo));
                         (yyval.nodo) = nodo;
                     ;}
@@ -2534,7 +2534,7 @@ yyreduce:
   case 82:
 
     {
-            Nodo* nodo = crearNodo(VARIABLE);
+            Nodo* nodo = crearNodo("VARIABLE");
             insertarNodoHijos(nodo, (yyvsp[(1) - (4)].nodo), (yyvsp[(3) - (4)].nodo));
             (yyval.nodo) = nodo;
          ;}
@@ -2545,7 +2545,7 @@ yyreduce:
     {
                         insert_table_var_used(VOID, last[0]);
                         last.clear();
-                        Nodo* nodo = crearNodo(PROCEDURE_INSTRUCCION);
+                        Nodo* nodo = crearNodo("PROCEDURE_INSTRUCCION");
                         insertarNodoHijos(nodo, (yyvsp[(1) - (1)].nodo));
                         (yyval.nodo) = nodo;
                       ;}
@@ -2554,7 +2554,7 @@ yyreduce:
   case 84:
 
     {
-                        Nodo* nodo = crearNodo(PROCEDURE_INSTRUCCION);
+                        Nodo* nodo = crearNodo("PROCEDURE_INSTRUCCION");
                         insertarNodoHijos(nodo, (yyvsp[(1) - (4)].nodo), (yyvsp[(3) - (4)].nodo));
                         (yyval.nodo) = nodo;
                       ;}
@@ -2563,7 +2563,7 @@ yyreduce:
   case 85:
 
     {
-                  Nodo* nodo = crearNodo(RELOP_EXPRESION);
+                  Nodo* nodo = crearNodo("RELOP_EXPRESION");
                   nodo->valorCadena = strdup("||");
                   insertarNodoHijos(nodo, (yyvsp[(1) - (3)].nodo), (yyvsp[(3) - (3)].nodo));
                   (yyval.nodo) = nodo;
@@ -2573,7 +2573,7 @@ yyreduce:
   case 86:
 
     {
-                  Nodo* nodo = crearNodo(RELOP_EXPRESION);
+                  Nodo* nodo = crearNodo("RELOP_EXPRESION");
                   nodo->valorCadena = strdup("&&");
                   insertarNodoHijos(nodo, (yyvsp[(1) - (3)].nodo), (yyvsp[(3) - (3)].nodo));
                   (yyval.nodo) = nodo;
@@ -2583,7 +2583,7 @@ yyreduce:
   case 87:
 
     {
-                  Nodo* nodo = crearNodo(RELOP_EXPRESION);
+                  Nodo* nodo = crearNodo("RELOP_EXPRESION");
                   nodo->valorCadena = strdup("!");
                   insertarNodoHijos(nodo, (yyvsp[(2) - (2)].nodo));
                   (yyval.nodo) = nodo;
@@ -2593,7 +2593,7 @@ yyreduce:
   case 88:
 
     {
-                  Nodo* nodo = crearNodo(RELOP_EXPRESION);
+                  Nodo* nodo = crearNodo("RELOP_EXPRESION");
                   nodo->valorCadena = strdup("()");
                   insertarNodoHijos(nodo, (yyvsp[(2) - (3)].nodo));
                   (yyval.nodo) = nodo;
@@ -2610,7 +2610,7 @@ yyreduce:
   case 90:
 
     {
-                        Nodo* nodo = crearNodo(RELOP_EXPRESION_SIMPLE);
+                        Nodo* nodo = crearNodo("RELOP_EXPRESION_SIMPLE");
                         insertarNodoHijos(nodo, (yyvsp[(1) - (3)].nodo), (yyvsp[(2) - (3)].nodo), (yyvsp[(3) - (3)].nodo));
                         (yyval.nodo) = nodo;
                        ;}
@@ -2660,7 +2660,7 @@ yyreduce:
   case 95:
 
     {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "identificador";
                   insertarNodoHijos(nodo, (yyvsp[(1) - (1)].nodo));
                   (yyval.nodo) = nodo;
@@ -2670,7 +2670,7 @@ yyreduce:
   case 96:
 
     {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "arreglo";
                   insertarNodoHijos(nodo, (yyvsp[(1) - (4)].nodo), (yyvsp[(3) - (4)].nodo));
                   (yyval.nodo) = nodo;
@@ -2680,7 +2680,7 @@ yyreduce:
   case 97:
 
     {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "llamado funciones";
                   insertarNodoHijos(nodo, (yyvsp[(1) - (4)].nodo), (yyvsp[(3) - (4)].nodo));
                   (yyval.nodo) = nodo;
@@ -2690,7 +2690,7 @@ yyreduce:
   case 98:
 
     {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "constante entera";
                   insertarNodoHijos(nodo, (yyvsp[(1) - (1)].nodo));
                   (yyval.nodo) = nodo;
@@ -2700,7 +2700,7 @@ yyreduce:
   case 99:
 
     {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "constante real";
                   insertarNodoHijos(nodo, (yyvsp[(1) - (1)].nodo));
                   (yyval.nodo) = nodo;
@@ -2710,7 +2710,7 @@ yyreduce:
   case 100:
 
     {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "signo";
                   insertarNodoHijos(nodo, (yyvsp[(1) - (2)].nodo), (yyvsp[(2) - (2)].nodo));
                   (yyval.nodo) = nodo;
@@ -2720,7 +2720,7 @@ yyreduce:
   case 101:
 
     {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "parentesis";
                   insertarNodoHijos(nodo, (yyvsp[(2) - (3)].nodo));
                   (yyval.nodo) = nodo;
@@ -2730,7 +2730,7 @@ yyreduce:
   case 102:
 
     {
-            Nodo* nodo = crearNodo(SIGNO);
+            Nodo* nodo = crearNodo("SIGNO");
             nodo->valorCadena = strdup("+");
             (yyval.nodo) = nodo;
       ;}
@@ -2739,7 +2739,7 @@ yyreduce:
   case 103:
 
     {
-            Nodo* nodo = crearNodo(SIGNO);
+            Nodo* nodo = crearNodo("SIGNO");
             nodo->valorCadena = strdup("-");
             (yyval.nodo) = nodo;
       ;}
@@ -2755,7 +2755,7 @@ yyreduce:
   case 105:
 
     {
-                  Nodo* nodo = crearNodo(CONSTANTE_ENTERA);
+                  Nodo* nodo = crearNodo("CONSTANTE_ENTERA");
                   insertarNodoHijos(nodo, (yyvsp[(1) - (2)].nodo), (yyvsp[(2) - (2)].nodo));
                   (yyval.nodo) = nodo;
                  ;}
@@ -2764,7 +2764,7 @@ yyreduce:
   case 106:
 
     {
-            Nodo* nodo = crearNodo(NUMERO);
+            Nodo* nodo = crearNodo("NUMERO");
             nodo->valorCadena = strdup((yyvsp[(1) - (1)].cadena));
             (yyval.nodo) = nodo;
       ;}
@@ -2773,7 +2773,7 @@ yyreduce:
   case 107:
 
     {
-                  Nodo* nodo = crearNodo(CONSTANTE_REAL);
+                  Nodo* nodo = crearNodo("CONSTANTE_REAL");
                   nodo->valorCadena += strdup((yyvsp[(2) - (4)].cadena));
                   nodo->valorCadena += strdup((yyvsp[(3) - (4)].cadena));
                   nodo->valorCadena += strdup((yyvsp[(4) - (4)].cadena));
@@ -2785,7 +2785,7 @@ yyreduce:
   case 108:
 
     {
-                  Nodo* nodo = crearNodo(CONSTANTE_REAL);
+                  Nodo* nodo = crearNodo("CONSTANTE_REAL");
                   nodo->valorCadena = strdup((yyvsp[(2) - (2)].cadena));
                   insertarNodoHijos(nodo, (yyvsp[(1) - (2)].nodo));
                   (yyval.nodo) = nodo;
@@ -3014,7 +3014,7 @@ yyreturn:
 
 
 void yyerror(const char *s){
-      printf("Error: %s\n en linea: %d", s, yylineno);
+      printf("Error: %s\n en linea: %d caracter : %d", s, yylloc.last_line, yylloc.first_column+1);
       exit(1);
 }
 

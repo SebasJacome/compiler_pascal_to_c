@@ -95,7 +95,7 @@ programa : PROGRAM
                         warning = true;
                   }
 
-                  Nodo* raiz = crearNodo(PROGRAMA);
+                  Nodo* raiz = crearNodo("PROGRAMA");
                   
                   insertarNodoHijos(raiz, $3, $6, $10);
                   $$ = raiz; 
@@ -118,7 +118,7 @@ programa : PROGRAM
 
 contenido_programa : declaraciones subprograma_declaraciones instruccion_compuesta
                    {
-                        Nodo* nodo = crearNodo(CONTENIDO_PROGRAMA);
+                        Nodo* nodo = crearNodo("CONTENIDO_PROGRAMA");
                         insertarNodoHijos(nodo, $1, $2, $3);
                         $$ = nodo;
                    }
@@ -130,7 +130,7 @@ identificador : IDENTIFICADOR
                         int var_line = @1.last_line;
                         last.push_back({var_name, var_line}); 
 
-                        Nodo* nodo = crearNodo(ID);
+                        Nodo* nodo = crearNodo("ID");
                         nodo->valorCadena = strdup($1);
                         $$ = nodo;
                             
@@ -139,49 +139,49 @@ identificador : IDENTIFICADOR
 
 relop : AND 
       {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup("&&");
             $$ = nodo;
       }
       | OR 
       {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup("||");
             $$ = nodo;
       }
       | EQUALS 
       {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup("==");
             $$ = nodo;
       }
       | LESSTHAN 
       {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
       | GREATERTHAN 
       {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
       | LESSTHANEQUALS 
       {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
       | GREATERTHANEQUALS 
       {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
       | NOTEQUALS
       {
-            Nodo* nodo = crearNodo(RELOP);
+            Nodo* nodo = crearNodo("RELOP");
             nodo->valorCadena = strdup("!=");
             $$ = nodo;
       }
@@ -189,13 +189,13 @@ relop : AND
 
 addop : PLUS 
       {
-            Nodo* nodo = crearNodo(ADDOP);
+            Nodo* nodo = crearNodo("ADDOP");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
       | MINUS
       {
-            Nodo* nodo = crearNodo(ADDOP);
+            Nodo* nodo = crearNodo("ADDOP");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
@@ -203,25 +203,25 @@ addop : PLUS
 
 mulop : ASTERISK 
       {
-            Nodo* nodo = crearNodo(MULOP);
+            Nodo* nodo = crearNodo("MULOP");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
       | SLASH 
       {
-            Nodo* nodo = crearNodo(MULOP);
+            Nodo* nodo = crearNodo("MULOP");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
       | DIV 
       {
-            Nodo* nodo = crearNodo(MULOP);
+            Nodo* nodo = crearNodo("MULOP");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
       | MOD
       {
-            Nodo* nodo = crearNodo(MULOP);
+            Nodo* nodo = crearNodo("MULOP");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
@@ -229,7 +229,7 @@ mulop : ASTERISK
 
 cadena: CADENA
       {
-            Nodo* nodo = crearNodo(CADENA_CONST);
+            Nodo* nodo = crearNodo("CADENA_CONST");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
@@ -276,7 +276,7 @@ declaraciones_variables : declaraciones_variables VAR identificador_lista COLON 
                                     $$ = $1;
                               }
                               else{
-                                    Nodo* nodo = crearNodo(DECLARACIONES_VARIABLES);
+                                    Nodo* nodo = crearNodo("DECLARACIONES_VARIABLES");
                                     insertarNodoHijos(nodo, $1, $3);
                                     agregarHijo($3, $5);
                                     $$ = nodo;
@@ -302,7 +302,7 @@ declaraciones_constantes : declaraciones_constantes CONST identificador EQUALS c
                                     $$ = $1;
                               }
                               else{
-                                    Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                                    Nodo* nodo = crearNodo("DECLARACIONES_CONSTANTES");
                                     insertarNodoHijos(nodo, $1, $3);
                                     agregarHijo($3, $5);
                                     $$ = nodo;
@@ -322,7 +322,7 @@ declaraciones_constantes : declaraciones_constantes CONST identificador EQUALS c
                                     $$ = $1;
                               }
                               else{
-                                    Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                                    Nodo* nodo = crearNodo("DECLARACIONES_CONSTANTES");
                                     insertarNodoHijos(nodo, $1, $3);
                                     agregarHijo($3, $5);
                                     $$ = nodo;
@@ -342,7 +342,7 @@ declaraciones_constantes : declaraciones_constantes CONST identificador EQUALS c
                                     $$ = $1;
                               }
                               else{
-                                    Nodo* nodo = crearNodo(DECLARACIONES_CONSTANTES);
+                                    Nodo* nodo = crearNodo("DECLARACIONES_CONSTANTES");
                                     insertarNodoHijos(nodo, $1, $3);
                                     agregarHijo($3, $5);
                                     $$ = nodo;
@@ -365,11 +365,11 @@ tipo : estandar_tipo
       }
       last.clear();
 
-      Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+      Nodo* nodo = crearNodo("ESTANDAR_TIPO");
       nodo->valorCadena = strdup($1);
-      Nodo* hijo1 = crearNodo(ESTANDAR_TIPO);
+      Nodo* hijo1 = crearNodo("ESTANDAR_TIPO");
       hijo1->valorCadena = strdup($3);
-      Nodo* hijo2 = crearNodo(ESTANDAR_TIPO);
+      Nodo* hijo2 = crearNodo("ESTANDAR_TIPO");
       hijo2->valorCadena = strdup($6);
       insertarNodoHijos(nodo, hijo1, hijo2, $9);
       $$ = nodo;
@@ -380,7 +380,7 @@ estandar_tipo : INTEGER_TIPO
               { 
                   last_variable_type = INTEGER;
 
-                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  Nodo* nodo = crearNodo("ESTANDAR_TIPO");
                   nodo->valorCadena = strdup("int");
                   $$ = nodo;
               }
@@ -388,7 +388,7 @@ estandar_tipo : INTEGER_TIPO
               { 
                   last_variable_type = FLOAT;
 
-                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  Nodo* nodo = crearNodo("ESTANDAR_TIPO");
                   nodo->valorCadena = strdup("float");
                   $$ = nodo;
               }
@@ -396,7 +396,7 @@ estandar_tipo : INTEGER_TIPO
               { 
                   last_variable_type = STRING;
 
-                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  Nodo* nodo = crearNodo("ESTANDAR_TIPO");
                   nodo->valorCadena = strdup("string");
                   $$ = nodo;
               }
@@ -404,7 +404,7 @@ estandar_tipo : INTEGER_TIPO
               { 
                   last_variable_type = BOOLEAN;
 
-                  Nodo* nodo = crearNodo(ESTANDAR_TIPO);
+                  Nodo* nodo = crearNodo("ESTANDAR_TIPO");
                   nodo->valorCadena = strdup("bool");
                   $$ = nodo;
               }
@@ -433,7 +433,7 @@ subprograma_declaraciones : subprograma_declaraciones subprograma_declaracion SE
 
 subprograma_declaracion : subprograma_encabezado declaraciones instruccion_compuesta
                         {
-                              Nodo* nodo = crearNodo(SUBPROGRAMA_DECLARACION);
+                              Nodo* nodo = crearNodo("SUBPROGRAMA_DECLARACION");
                               insertarNodoHijos(nodo, $1, $2, $3);
                               $$ = nodo;
                         }
@@ -451,7 +451,7 @@ subprograma_encabezado  : FUNCTION
                         }
                         SEMICOLON
                         {
-                              Nodo* nodo = crearNodo(SUBPROGRAMA_ENCABEZADO);
+                              Nodo* nodo = crearNodo("SUBPROGRAMA_ENCABEZADO");
                               nodo->valorCadena = strdup("function");
                               insertarNodoHijos(nodo, $3, $4, $6);
                               $$ = nodo;
@@ -466,7 +466,7 @@ subprograma_encabezado  : FUNCTION
                               insert_table_func_def(VOID, last[0]);
                               last.clear();
 
-                              Nodo* nodo = crearNodo(SUBPROGRAMA_ENCABEZADO);
+                              Nodo* nodo = crearNodo("SUBPROGRAMA_ENCABEZADO");
                               nodo->valorCadena = strdup("procedure");
                               insertarNodoHijos(nodo, $3, $4);
                               $$ = nodo;
@@ -489,7 +489,7 @@ parametros_lista : identificador_lista COLON tipo
                         insert_table_var_def(last_variable_type, last[last.size() - 1]);
                         last.pop_back();
                   }
-                  Nodo* nodo = crearNodo(PARAMETROS_LISTA);
+                  Nodo* nodo = crearNodo("PARAMETROS_LISTA");
                   insertarNodoHijos(nodo, $1);
                   insertarNodoHijos($1, $3);
                   $$ = nodo;
@@ -517,7 +517,7 @@ instruccion_compuesta : BEG instrucciones_opcionales
                         END
                         { 
                               current_scope = 0;
-                              Nodo* nodo = crearNodo(INSTRUCCION_COMPUESTA);
+                              Nodo* nodo = crearNodo("INSTRUCCION_COMPUESTA");
                               insertarNodoHijos(nodo, $2);
                               $$ = nodo;
                         }
@@ -552,43 +552,43 @@ instrucciones_lista : instrucciones
 
 instrucciones : variable_asignacion
               {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, $1);
                   $$ = nodo;
               }
               | procedure_instruccion
               {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, $1);
                   $$ = nodo;
               }
               | instruccion_compuesta
               {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, $1);
                   $$ = nodo;
               }
               | if_instruccion
               {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, $1);
                   $$ = nodo;
               }
               | repeticion_instruccion
               {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, $1);
                   $$ = nodo;
               }
               | lectura_instruccion
               {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, $1);
                   $$ = nodo;
               }
               | escritura_instruccion
               {
-                  Nodo* nodo = crearNodo(INSTRUCCIONES);
+                  Nodo* nodo = crearNodo("INSTRUCCIONES");
                   insertarNodoHijos(nodo, $1);
                   $$ = nodo;
               }
@@ -596,21 +596,21 @@ instrucciones : variable_asignacion
 
 repeticion_instruccion : WHILE relop_expresion DO instrucciones
                        {
-                        Nodo* nodo = crearNodo(REPETICION_INSTRUCCION);
+                        Nodo* nodo = crearNodo("REPETICION_INSTRUCCION");
                         nodo->valorCadena = strdup("while");
                         insertarNodoHijos(nodo, $2, $4);
                         $$ = nodo;
                        }
                        | FOR for_asignacion TO expresion DO instrucciones
                        {
-                        Nodo* nodo = crearNodo(REPETICION_INSTRUCCION);
+                        Nodo* nodo = crearNodo("REPETICION_INSTRUCCION");
                         nodo->valorCadena = strdup("for++");
                         insertarNodoHijos(nodo, $2, $4, $6);
                         $$ = nodo;
                        }
                        | FOR for_asignacion DOWNTO expresion DO instrucciones
                        {
-                        Nodo* nodo = crearNodo(REPETICION_INSTRUCCION);
+                        Nodo* nodo = crearNodo("REPETICION_INSTRUCCION");
                         nodo->valorCadena = strdup("for--");
                         insertarNodoHijos(nodo, $2, $4, $6);
                         $$ = nodo;
@@ -619,14 +619,14 @@ repeticion_instruccion : WHILE relop_expresion DO instrucciones
 
 lectura_instruccion : READ LPAREN identificador RPAREN
                     {
-                        Nodo* nodo = crearNodo(LECTURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("LECTURA_INSTRUCCION");
                         nodo->valorCadena = strdup("read");
                         agregarHijo(nodo, $3);
                         $$ = nodo;
                     }
                     | READLN LPAREN identificador RPAREN
                     {
-                        Nodo* nodo = crearNodo(LECTURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("LECTURA_INSTRUCCION");
                         nodo->valorCadena = strdup("readln");
                         agregarHijo(nodo, $3);
                         $$ = nodo;
@@ -639,7 +639,7 @@ escritura_instruccion : WRITE LPAREN cadena COMMA identificador RPAREN
                         insert_table_var_used(last_variable_type, last[0]);
                         last.clear();
 
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("write");
                         insertarNodoHijos(nodo, $3, $5);
                         $$ = nodo;
@@ -650,35 +650,35 @@ escritura_instruccion : WRITE LPAREN cadena COMMA identificador RPAREN
                         insert_table_var_used(last_variable_type, last[0]);
                         last.clear();
 
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("writeln");
                         insertarNodoHijos(nodo, $3, $5);
                         $$ = nodo;
                       }
                       | WRITE LPAREN cadena RPAREN
                       {
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("write");
                         insertarNodoHijos(nodo, $3);
                         $$ = nodo;
                       }
                       | WRITELN LPAREN cadena RPAREN
                       {
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("writeln");
                         insertarNodoHijos(nodo, $3);
                         $$ = nodo;
                       }
                       | WRITE LPAREN cadena COMMA expresion RPAREN
                       {
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("write");
                         insertarNodoHijos(nodo, $3, $5);
                         $$ = nodo;
                       }
                       | WRITELN LPAREN cadena COMMA expresion RPAREN
                       {
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("writeln");
                         insertarNodoHijos(nodo, $3, $5);
                         $$ = nodo;
@@ -689,7 +689,7 @@ escritura_instruccion : WRITE LPAREN cadena COMMA identificador RPAREN
                         insert_table_var_used(last_variable_type, last[0]);
                         last.clear();
 
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("write");
                         insertarNodoHijos(nodo, $3);
                         $$ = nodo;
@@ -700,7 +700,7 @@ escritura_instruccion : WRITE LPAREN cadena COMMA identificador RPAREN
                         insert_table_var_used(last_variable_type, last[0]);
                         last.clear();
 
-                        Nodo* nodo = crearNodo(ESCRITURA_INSTRUCCION);
+                        Nodo* nodo = crearNodo("ESCRITURA_INSTRUCCION");
                         nodo->valorCadena = strdup("writeln");
                         insertarNodoHijos(nodo, $3);
                         $$ = nodo;
@@ -709,14 +709,14 @@ escritura_instruccion : WRITE LPAREN cadena COMMA identificador RPAREN
 
 if_instruccion : IF relop_expresion THEN instrucciones ELSE instrucciones
                {
-                  Nodo* nodo = crearNodo(IF_INSTRUCCION);
+                  Nodo* nodo = crearNodo("IF_INSTRUCCION");
                   nodo->valorCadena = strdup("if");
                   insertarNodoHijos(nodo, $2, $4, $6);
                   $$ = nodo;
                }
                | IF relop_expresion THEN instrucciones
                {
-                  Nodo* nodo = crearNodo(IF_INSTRUCCION);
+                  Nodo* nodo = crearNodo("IF_INSTRUCCION");
                   nodo->valorCadena = strdup("if");
                   insertarNodoHijos(nodo, $2, $4);
                   $$ = nodo;
@@ -730,7 +730,7 @@ variable_asignacion : variable COLON EQUALS expresion
                         }
                         last.clear();
 
-                        Nodo* nodo = crearNodo(VARIABLE_ASIGNACION);
+                        Nodo* nodo = crearNodo("VARIABLE_ASIGNACION");
                         insertarNodoHijos(nodo, $1, $4);
                         $$ = nodo;
                     }
@@ -752,7 +752,7 @@ variable : identificador
          }
          | identificador LBRACKET expresion RBRACKET
          {
-            Nodo* nodo = crearNodo(VARIABLE);
+            Nodo* nodo = crearNodo("VARIABLE");
             insertarNodoHijos(nodo, $1, $3);
             $$ = nodo;
          }
@@ -762,41 +762,41 @@ procedure_instruccion : identificador
                       {
                         insert_table_var_used(VOID, last[0]);
                         last.clear();
-                        Nodo* nodo = crearNodo(PROCEDURE_INSTRUCCION);
+                        Nodo* nodo = crearNodo("PROCEDURE_INSTRUCCION");
                         insertarNodoHijos(nodo, $1);
                         $$ = nodo;
                       }
                       | identificador LPAREN expresion_lista RPAREN
                       {
-                        Nodo* nodo = crearNodo(PROCEDURE_INSTRUCCION);
+                        Nodo* nodo = crearNodo("PROCEDURE_INSTRUCCION");
                         insertarNodoHijos(nodo, $1, $3);
                         $$ = nodo;
                       }
 
 relop_expresion: relop_expresion OR relop_expresion
                {
-                  Nodo* nodo = crearNodo(RELOP_EXPRESION);
+                  Nodo* nodo = crearNodo("RELOP_EXPRESION");
                   nodo->valorCadena = strdup("||");
                   insertarNodoHijos(nodo, $1, $3);
                   $$ = nodo;
                }
                | relop_expresion AND relop_expresion
                {
-                  Nodo* nodo = crearNodo(RELOP_EXPRESION);
+                  Nodo* nodo = crearNodo("RELOP_EXPRESION");
                   nodo->valorCadena = strdup("&&");
                   insertarNodoHijos(nodo, $1, $3);
                   $$ = nodo;
                }
                | NOT relop_expresion
                {
-                  Nodo* nodo = crearNodo(RELOP_EXPRESION);
+                  Nodo* nodo = crearNodo("RELOP_EXPRESION");
                   nodo->valorCadena = strdup("!");
                   insertarNodoHijos(nodo, $2);
                   $$ = nodo;
                }
                | LPAREN relop_expresion RPAREN 
                {
-                  Nodo* nodo = crearNodo(RELOP_EXPRESION);
+                  Nodo* nodo = crearNodo("RELOP_EXPRESION");
                   nodo->valorCadena = strdup("()");
                   insertarNodoHijos(nodo, $2);
                   $$ = nodo;
@@ -809,7 +809,7 @@ relop_expresion: relop_expresion OR relop_expresion
 
 relop_expresion_simple : expresion relop expresion
                        {
-                        Nodo* nodo = crearNodo(RELOP_EXPRESION_SIMPLE);
+                        Nodo* nodo = crearNodo("RELOP_EXPRESION_SIMPLE");
                         insertarNodoHijos(nodo, $1, $2, $3);
                         $$ = nodo;
                        }
@@ -847,49 +847,49 @@ expresion   : expresion addop expresion
             }
             | identificador
             {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "identificador";
                   insertarNodoHijos(nodo, $1);
                   $$ = nodo;
             }
             | identificador LBRACKET expresion RBRACKET
             {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "arreglo";
                   insertarNodoHijos(nodo, $1, $3);
                   $$ = nodo;
             }
             | identificador LPAREN expresion_lista RPAREN
             {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "llamado funciones";
                   insertarNodoHijos(nodo, $1, $3);
                   $$ = nodo;
             }
             | constante_entera
             {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "constante entera";
                   insertarNodoHijos(nodo, $1);
                   $$ = nodo;
             }
             | constante_real
             {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "constante real";
                   insertarNodoHijos(nodo, $1);
                   $$ = nodo;
             }
             | signo expresion
             {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "signo";
                   insertarNodoHijos(nodo, $1, $2);
                   $$ = nodo;
             }
             | LPAREN expresion RPAREN
             {
-                  Nodo* nodo = crearNodo(EXPRESION);
+                  Nodo* nodo = crearNodo("EXPRESION");
                   nodo->valorCadena = "parentesis";
                   insertarNodoHijos(nodo, $2);
                   $$ = nodo;
@@ -898,13 +898,13 @@ expresion   : expresion addop expresion
 
 signo : PLUS
       {
-            Nodo* nodo = crearNodo(SIGNO);
+            Nodo* nodo = crearNodo("SIGNO");
             nodo->valorCadena = strdup("+");
             $$ = nodo;
       }
       | MINUS
       {
-            Nodo* nodo = crearNodo(SIGNO);
+            Nodo* nodo = crearNodo("SIGNO");
             nodo->valorCadena = strdup("-");
             $$ = nodo;
       }
@@ -916,7 +916,7 @@ signo : PLUS
 
 constante_entera : signo numero
                  {
-                  Nodo* nodo = crearNodo(CONSTANTE_ENTERA);
+                  Nodo* nodo = crearNodo("CONSTANTE_ENTERA");
                   insertarNodoHijos(nodo, $1, $2);
                   $$ = nodo;
                  }
@@ -924,7 +924,7 @@ constante_entera : signo numero
 
 numero: NUM_ENTERO
       {
-            Nodo* nodo = crearNodo(NUMERO);
+            Nodo* nodo = crearNodo("NUMERO");
             nodo->valorCadena = strdup($1);
             $$ = nodo;
       }
@@ -932,7 +932,7 @@ numero: NUM_ENTERO
 
 constante_real : signo NUM_ENTERO PERIOD NUM_ENTERO
                {
-                  Nodo* nodo = crearNodo(CONSTANTE_REAL);
+                  Nodo* nodo = crearNodo("CONSTANTE_REAL");
                   nodo->valorCadena += strdup($2);
                   nodo->valorCadena += strdup($3);
                   nodo->valorCadena += strdup($4);
@@ -941,7 +941,7 @@ constante_real : signo NUM_ENTERO PERIOD NUM_ENTERO
                }
                | signo EXP
                {
-                  Nodo* nodo = crearNodo(CONSTANTE_REAL);
+                  Nodo* nodo = crearNodo("CONSTANTE_REAL");
                   nodo->valorCadena = strdup($2);
                   insertarNodoHijos(nodo, $1);
                   $$ = nodo;
@@ -951,7 +951,7 @@ constante_real : signo NUM_ENTERO PERIOD NUM_ENTERO
 %%
 
 void yyerror(const char *s){
-      printf("Error: %s\n en linea: %d", s, yylineno);
+      printf("Error: %s\n en linea: %d caracter : %d", s, yylloc.last_line, yylloc.first_column+1);
       exit(1);
 }
 
