@@ -9,7 +9,7 @@ using namespace std;
 
 #define CAPACITY 100 // Size of the HashTable.
 #define CAPACITY_COLLISION_LIST 10 // Collision list capacity
-#define MAX_LINES_REFERENCE 20 // Array's size of reference lines for identifier
+#define MAX_LINES_REFERENCE 100 // Array's size of reference lines for identifier
 
 unsigned long memory_assign = 0;
 

@@ -291,56 +291,56 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 
 #define YY_NUM_RULES 57
 #define YY_END_OF_BUFFER 58
-static yyconst short int yy_acclist[243] =
+static yyconst short int yy_acclist[244] =
     {   0,
        58,   56,   57,    1,   56,   57,   50,   57,   56,   57,
        32,   56,   57,   33,   56,   57,   38,   56,   57,   36,
        56,   57,   43,   56,   57,   37,   56,   57,   44,   56,
-       57,   39,   56,   57,   56,   57,   55,   56,   57,   41,
-       56,   57,   42,   56,   57,   45,   56,   57,   40,   56,
-       57,   46,   56,   57,   34,   56,   57,   35,   56,   57,
+       57,   39,   56,   57,   55,   56,   57,   55,   56,   57,
+       41,   56,   57,   42,   56,   57,   45,   56,   57,   40,
+       56,   57,   46,   56,   57,   34,   56,   57,   35,   56,
+       57,   54,   56,   57,   54,   56,   57,   54,   56,   57,
        54,   56,   57,   54,   56,   57,   54,   56,   57,   54,
        56,   57,   54,   56,   57,   54,   56,   57,   54,   56,
        57,   54,   56,   57,   54,   56,   57,   54,   56,   57,
+
        54,   56,   57,   54,   56,   57,   54,   56,   57,   54,
+       56,   57,   53,   55,   47,   49,   48,   54,   54,   54,
+       54,   54,   54,   54,   19,   54,   54,   54,   54,   54,
+       15,   54,   54,   54,   54,   14,   54,   28,   54,   54,
+       54,   54,   54,   21,   54,   54,   54,   54,   27,   54,
+       54,   54,   54,   54,   30,   54,   54,   54,   12,   54,
+       20,   54,   54,   54,   31,   54,   29,   54,   54,   54,
+       54,   54,    3,   54,   54,   54,   52,   51,   54,   54,
+       54,   54,   54,   17,   54,   54,   54,   54,   54,   23,
+       54,    5,   54,   54,   16,   54,   54,   54,   13,   54,
 
-       56,   57,   54,   56,   57,   54,   56,   57,   54,   56,
-       57,   53,   55,   47,   49,   48,   54,   54,   54,   54,
-       54,   54,   54,   19,   54,   54,   54,   54,   54,   15,
-       54,   54,   54,   54,   14,   54,   28,   54,   54,   54,
-       54,   54,   21,   54,   54,   54,   54,   27,   54,   54,
-       54,   54,   54,   30,   54,   54,   54,   12,   54,   20,
-       54,   54,   54,   31,   54,   29,   54,   54,   54,   54,
-       54,    3,   54,   54,   54,   52,   51,   54,   54,   54,
-       54,   54,   17,   54,   54,   54,   54,   54,   23,   54,
-        5,   54,   54,   16,   54,   54,   54,   13,   54,   11,
-
-       54,   54,    8,   54,   54,   54,   54,   54,   54,   54,
-       54,   18,   54,   25,   54,   54,   22,   54,   54,   54,
-       54,   54,   24,   54,    6,   54,   54,    7,   54,   54,
-        4,   54,   54,    2,   54,   26,   54,    9,   54,   54,
-       10,   54
+       11,   54,   54,    8,   54,   54,   54,   54,   54,   54,
+       54,   54,   18,   54,   25,   54,   54,   22,   54,   54,
+       54,   54,   54,   24,   54,    6,   54,   54,    7,   54,
+       54,    4,   54,   54,    2,   54,   26,   54,    9,   54,
+       54,   10,   54
     } ;
 
 static yyconst short int yy_accept[154] =
     {   0,
         1,    1,    1,    2,    4,    7,    9,   11,   14,   17,
-       20,   23,   26,   29,   32,   35,   37,   40,   43,   46,
-       49,   52,   55,   58,   61,   64,   67,   70,   73,   76,
-       79,   82,   85,   88,   91,   94,   97,  100,  103,  106,
-      109,  112,  112,  113,  113,  113,  113,  114,  115,  116,
-      117,  118,  119,  120,  121,  122,  123,  124,  126,  127,
-      128,  129,  130,  132,  133,  134,  135,  137,  139,  140,
-      141,  142,  143,  145,  146,  147,  148,  148,  148,  148,
-      148,  150,  151,  152,  153,  154,  156,  157,  158,  160,
-      162,  163,  164,  166,  168,  169,  170,  171,  172,  174,
+       20,   23,   26,   29,   32,   35,   38,   41,   44,   47,
+       50,   53,   56,   59,   62,   65,   68,   71,   74,   77,
+       80,   83,   86,   89,   92,   95,   98,  101,  104,  107,
+      110,  113,  113,  114,  114,  114,  114,  115,  116,  117,
+      118,  119,  120,  121,  122,  123,  124,  125,  127,  128,
+      129,  130,  131,  133,  134,  135,  136,  138,  140,  141,
+      142,  143,  144,  146,  147,  148,  149,  149,  149,  149,
+      149,  151,  152,  153,  154,  155,  157,  158,  159,  161,
+      163,  164,  165,  167,  169,  170,  171,  172,  173,  175,
 
-      175,  176,  177,  177,  178,  179,  180,  181,  182,  183,
-      185,  186,  187,  188,  189,  191,  193,  194,  196,  197,
-      198,  200,  202,  203,  205,  206,  207,  208,  209,  210,
-      211,  212,  214,  216,  217,  219,  220,  221,  222,  223,
-      225,  227,  228,  230,  231,  233,  234,  236,  238,  240,
-      241,  243,  243
+      176,  177,  178,  178,  179,  180,  181,  182,  183,  184,
+      186,  187,  188,  189,  190,  192,  194,  195,  197,  198,
+      199,  201,  203,  204,  206,  207,  208,  209,  210,  211,
+      212,  213,  215,  217,  218,  220,  221,  222,  223,  224,
+      226,  228,  229,  231,  232,  234,  235,  237,  239,  241,
+      242,  244,  244
     } ;
 
 static yyconst int yy_ec[256] =
@@ -756,195 +756,195 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return PROGRAM; }
+{ yylval.cadena = strdup(yytext); return PROGRAM; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return VAR; }
+{ yylval.cadena = strdup(yytext); return VAR; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return INTEGER_TIPO; }
+{ yylval.cadena = strdup(yytext); return INTEGER_TIPO; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return REAL_TIPO; }
+{ yylval.cadena = strdup(yytext); return REAL_TIPO; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return STRING_TIPO; }
+{ yylval.cadena = strdup(yytext); return STRING_TIPO; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return BOOLEAN_TIPO; }
+{ yylval.cadena = strdup(yytext); return BOOLEAN_TIPO; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return CONST; }
+{ yylval.cadena = strdup(yytext); return CONST; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return FUNCTION; }
+{ yylval.cadena = strdup(yytext); return FUNCTION; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return PROCEDURE; }
+{ yylval.cadena = strdup(yytext); return PROCEDURE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return BEG;}
+{ yylval.cadena = strdup(yytext); return BEG;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return END; }
+{ yylval.cadena = strdup(yytext); return END; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return ARRAY; }
+{ yylval.cadena = strdup(yytext); return ARRAY; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return OF; }
+{ yylval.cadena = strdup(yytext); return OF; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return IF; }
+{ yylval.cadena = strdup(yytext); return IF; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return THEN; }
+{ yylval.cadena = strdup(yytext); return THEN; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return ELSE; }
+{ yylval.cadena = strdup(yytext); return ELSE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return WHILE; }
+{ yylval.cadena = strdup(yytext); return WHILE; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return DO; }
+{ yylval.cadena = strdup(yytext); return DO; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return FOR; }
+{ yylval.cadena = strdup(yytext); return FOR; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return TO; }
+{ yylval.cadena = strdup(yytext); return TO; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return DOWNTO; }
+{ yylval.cadena = strdup(yytext); return DOWNTO; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return READ; }
+{ yylval.cadena = strdup(yytext); return READ; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return READLN; }
+{ yylval.cadena = strdup(yytext); return READLN; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return WRITE; }
+{ yylval.cadena = strdup(yytext); return WRITE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return WRITELN; }
+{ yylval.cadena = strdup(yytext); return WRITELN; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return AND; }
+{ yylval.cadena = strdup(yytext); return AND; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return OR; }
+{ yylval.cadena = strdup(yytext); return OR; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return NOT; }
+{ yylval.cadena = strdup(yytext); return NOT; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return DIV; }
+{ yylval.cadena = strdup(yytext); return DIV; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return MOD; }
+{ yylval.cadena = strdup(yytext); return MOD; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return LPAREN;}
+{ yylval.cadena = strdup(yytext); return LPAREN;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return RPAREN;}
+{ yylval.cadena = strdup(yytext); return RPAREN;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return LBRACKET;}
+{ yylval.cadena = strdup(yytext); return LBRACKET;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return RBRACKET;}
+{ yylval.cadena = strdup(yytext); return RBRACKET;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return PLUS;}
+{ yylval.cadena = strdup(yytext); return PLUS;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return MINUS;}
+{ yylval.cadena = strdup(yytext); return MINUS;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return ASTERISK;}
+{ yylval.cadena = strdup(yytext); return ASTERISK;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return SLASH;} 
+{ yylval.cadena = strdup(yytext); return SLASH;} 
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return EQUALS; }
+{ yylval.cadena = strdup(yytext); return EQUALS; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return COLON; }
+{ yylval.cadena = strdup(yytext); return COLON; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return SEMICOLON; }
+{ yylval.cadena = strdup(yytext); return SEMICOLON; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return COMMA; }
+{ yylval.cadena = strdup(yytext); return COMMA; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return PERIOD; }
+{ yylval.cadena = strdup(yytext); return PERIOD; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return LESSTHAN; }
+{ yylval.cadena = strdup(yytext); return LESSTHAN; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return GREATERTHAN; }
+{ yylval.cadena = strdup(yytext); return GREATERTHAN; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return LESSTHANEQUALS; }
+{ yylval.cadena = strdup(yytext); return LESSTHANEQUALS; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return GREATERTHANEQUALS; }
+{ yylval.cadena = strdup(yytext); return GREATERTHANEQUALS; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-{ yylval.cadena = yytext; return NOTEQUALS; }
+{ yylval.cadena = strdup(yytext); return NOTEQUALS; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
@@ -953,33 +953,33 @@ YY_RULE_SETUP
 case 51:
 YY_RULE_SETUP
 { 
-    yylval.cadena = yytext; return EXP;
+    yylval.cadena = strdup(yytext); return EXP;
 }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 {
-    // printf("Comentario: %s\n", yytext);
+    // printf("Comentario: %s\n", strdup(yytext));
 };
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 {
-    yylval.cadena = strdup(yytext);
+    yylval.cadena = strdup(strdup(yytext));
     return CADENA;
 };
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
 {
-    yylval.cadena = yytext;
+    yylval.cadena = strdup(yytext);
     return IDENTIFICADOR;
 };
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
 {
-    yylval.cadena = yytext;
+    yylval.cadena = strdup(yytext);
     return NUM_ENTERO;
 }
 	YY_BREAK

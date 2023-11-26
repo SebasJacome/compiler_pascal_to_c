@@ -1,4 +1,4 @@
 program Hello(void);
 begin
-    writeln("Hola Mundo do begin program")
+    writeln("Hello World! This is my first pascal program.")
 end.

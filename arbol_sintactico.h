@@ -9,15 +9,11 @@
 
 enum tipoNodo {
     SIN_TIPO, PROGRAMA, CONTENIDO_PROGRAMA, DECLARACIONES_VARIABLES, INSTRUCCION_COMPUESTA, DECLARACIONES_CONSTANTES,
-    SUBPROGRAMA_DECLARACION, SUBPROGRAMA_ENCABEZADO, PARAMETROS, PARAMETROS_LISTA, NUMERO, INSTRUCCIONES,
+    SUBPROGRAMA_DECLARACION, SUBPROGRAMA_ENCABEZADO, PARAMETROS_LISTA, NUMERO, INSTRUCCIONES,
     REPETICION_INSTRUCCION, LECTURA_INSTRUCCION, ESCRITURA_INSTRUCCION, IF_INSTRUCCION, VARIABLE_ASIGNACION, 
-    VARIABLE, PROCEDURE_INSTRUCCION, CADENA_CONST, RELOP_EXPRESION_SIMPLE, LLAMADO_FUNCION, FACTOR, 
-    CONSTANTE_ENTERA, CONSTANTE_REAL, ID, RELOP, ADDOP, MULOP, ESTANDAR_TIPO, SIGNO
+    VARIABLE, PROCEDURE_INSTRUCCION, CADENA_CONST, RELOP_EXPRESION_SIMPLE, LLAMADO_FUNCION, EXPRESION, 
+    CONSTANTE_ENTERA, CONSTANTE_REAL, ID, RELOP, ADDOP, MULOP, ESTANDAR_TIPO, SIGNO, RELOP_EXPRESION
 };
-
-// IDENTIFICADOR_LISTA, DECLARACIONES, CONSTANTES, TIPO, SUBPROGRAMA_DECLARACIONES, ARGUMENTOS, INSTRUCCIONES_OPCIONALES
-// INSTRUCCIONES_LISTA, INSTRUCCION_ELSE, FOR_ASIGNACION, RELOP_EXPRESION, RELOP_NOT, RELOP_PAREN, EXPRESION_LISTA
-// HOLA GARRITA, CÓMO ESTÁS. MIRA VENGO A EXPLICARTE TODOS LOS NUEVOS SENSORES
 
 std::string tipoTexto(tipoNodo tipo);
 
@@ -97,6 +93,12 @@ void imprimirArbol(Nodo* nodo) {
     }
 }
 
+void imprimirArbolFinal(Nodo* nodo) {
+    printf("Arbol Sintactico:\n");
+    printf("--------------------\n");
+    imprimirArbol(nodo);
+    printf("--------------------\n");
+}
 
 std::string tipoTexto(tipoNodo tipo) {
     switch(tipo) {
@@ -116,8 +118,6 @@ std::string tipoTexto(tipoNodo tipo) {
             return "SUBPROGRAMA_DECLARACION";
         case SUBPROGRAMA_ENCABEZADO:
             return "SUBPROGRAMA_ENCABEZADO";
-        case PARAMETROS:
-            return "PARAMETROS";
         case PARAMETROS_LISTA:
             return "PARAMETROS_LISTA";
         case INSTRUCCIONES:
@@ -140,8 +140,8 @@ std::string tipoTexto(tipoNodo tipo) {
             return "RELOP_EXPRESION_SIMPLE";
         case LLAMADO_FUNCION:
             return "LLAMADO_FUNCION";
-        case FACTOR:
-            return "FACTOR";
+        case EXPRESION:
+            return "EXPRESION";
         case CONSTANTE_ENTERA:
             return "CONSTANTE_ENTERA";
         case CONSTANTE_REAL:
@@ -162,6 +162,8 @@ std::string tipoTexto(tipoNodo tipo) {
             return "NUMERO";
         case CADENA_CONST:
             return "CADENA_CONST";
+        case RELOP_EXPRESION:
+            return "RELOP_EXPRESION";
         default:
             return "ERROR: TIPO: " + std::to_string(tipo);
     }
